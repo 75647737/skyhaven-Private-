@@ -1,0 +1,96 @@
+"""Skyhaven render farm on Modal: headless Blender renders a scene's frames in parallel chunks.
+
+CPU workers are the default (Cycles on CPU). A GPU worker (EEVEE or Cycles on an L4) is included for final
+renders because it's usually much cheaper per frame; it's only used when you pass --gpu.
+
+One-time setup (run on the machine that holds the Modal login, never paste tokens into code or chat):
+  modal volume create skyhaven-files
+  modal volume create skyhaven-renders
+
+Upload a scene (and everything it links: characters, sets, props, keeping the same folder layout):
+  modal volume put skyhaven-files blender/ /blender/
+
+Render (frames 1-240 of scene 1, 24 frames per worker, at most 2 workers at once):
+  modal run tools/modal/skyhaven_render.py --blend blender/episodes/ep01/ep01_s01_bedroom.blend --start 1 --end 240
+  modal run tools/modal/skyhaven_render.py --blend ... --start 1 --end 48 --preview      # 50% size, low samples
+  modal run tools/modal/skyhaven_render.py --blend ... --start 1 --end 240 --gpu         # L4, EEVEE
+
+Download the frames:
+  modal volume get skyhaven-renders /ep01_s01_bedroom/ renders/ep01/s01/
+"""
+import os, subprocess, math
+import modal
+
+BLENDER_VERSION = "5.3.0"            # match the version used on the PC
+BLENDER_SERIES = "5.3"
+CPU_CORES = 8.0                      # per CPU worker
+CPU_MEMORY_MB = 16384
+MAX_WORKERS = 2                      # cost guard: never more than this many containers at once
+CHUNK_TIMEOUT_S = 2 * 60 * 60        # a chunk that runs longer than 2 h is stopped
+
+image = (
+    modal.Image.debian_slim(python_version="3.11")
+    .apt_install("wget", "xz-utils", "libxi6", "libxxf86vm1", "libxfixes3", "libxrender1", "libxkbcommon0",
+                 "libsm6", "libice6", "libgl1", "libegl1", "libglu1-mesa", "libx11-6")
+    .run_commands(
+        f"wget -q https://download.blender.org/release/Blender{BLENDER_SERIES}/blender-{BLENDER_VERSION}-linux-x64.tar.xz -O /tmp/b.tar.xz",
+        "mkdir -p /opt/blender && tar -xJf /tmp/b.tar.xz -C /opt/blender --strip-components=1 && rm /tmp/b.tar.xz",
+        "ln -s /opt/blender/blender /usr/local/bin/blender",
+    )
+)
+files = modal.Volume.from_name("skyhaven-files")
+renders = modal.Volume.from_name("skyhaven-renders")
+app = modal.App("skyhaven-render", image=image)
+
+def _render(blend, start, end, engine, preview, device):
+    files.reload()
+    src = os.path.join("/files", blend)
+    if not os.path.exists(src):
+        raise SystemExit(f"{blend} is not on the skyhaven-files volume (upload it with `modal volume put`)")
+    shot = os.path.splitext(os.path.basename(blend))[0]
+    out_dir = f"/renders/{shot}/"
+    os.makedirs(out_dir, exist_ok=True)
+    # settings applied inside Blender before rendering (no change to the saved file)
+    py = f"""
+import bpy
+s = bpy.context.scene
+s.render.engine = '{engine}'
+s.render.image_settings.file_format = 'PNG'
+if {preview}:
+    s.render.resolution_percentage = 50
+if s.render.engine == 'CYCLES':
+    s.cycles.device = '{device}'
+    if {preview}: s.cycles.samples = 32
+    if '{device}' == 'GPU':
+        p = bpy.context.preferences.addons['cycles'].preferences
+        p.compute_device_type = 'CUDA'; p.get_devices()
+        for d in p.devices: d.use = True
+"""
+    with open("/tmp/setup.py", "w") as f:
+        f.write(py)
+    cmd = ["blender", "-b", src, "--python", "/tmp/setup.py", "-o", out_dir + "####", "-s", str(start), "-e", str(end), "-a"]
+    print(" ".join(cmd), flush=True)
+    subprocess.run(cmd, check=True)
+    renders.commit()
+    return f"{shot}: frames {start}-{end} done"
+
+@app.function(volumes={"/files": files, "/renders": renders}, cpu=CPU_CORES, memory=CPU_MEMORY_MB,
+              timeout=CHUNK_TIMEOUT_S, max_containers=MAX_WORKERS)
+def render_cpu(blend: str, start: int, end: int, preview: bool = False):
+    return _render(blend, start, end, "CYCLES", preview, "CPU")
+
+@app.function(volumes={"/files": files, "/renders": renders}, gpu=["L4", "T4"], cpu=4.0, memory=16384,
+              timeout=CHUNK_TIMEOUT_S, max_containers=1)
+def render_gpu(blend: str, start: int, end: int, preview: bool = False, engine: str = "BLENDER_EEVEE_NEXT"):
+    return _render(blend, start, end, engine, preview, "GPU")
+
+@app.local_entrypoint()
+def main(blend: str, start: int = 1, end: int = 24, chunk: int = 24, preview: bool = False, gpu: bool = False):
+    frames = end - start + 1
+    chunks = [(blend, a, min(a + chunk - 1, end)) for a in range(start, end + 1, chunk)]
+    workers = 1 if gpu else min(MAX_WORKERS, len(chunks))
+    print(f"{frames} frames in {len(chunks)} chunks on {'1 GPU worker' if gpu else f'{workers} CPU worker(s) x {CPU_CORES:g} cores'}")
+    fn = render_gpu if gpu else render_cpu
+    for msg in fn.starmap([(b, a, e, preview) for b, a, e in chunks]):
+        print(msg)
+    print("Download: modal volume get skyhaven-renders /%s/ renders/" % os.path.splitext(os.path.basename(blend))[0])
