@@ -1,0 +1,40 @@
+<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;background:#000;overflow:hidden}</style></head><body>
+<script src="vendor/three.min.js"></script><script src="rig3d.js"></script>
+<script>
+const W = 1920, H = 1080, T = THREE;
+const renderer = new T.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setSize(W, H); renderer.setPixelRatio(1); renderer.shadowMap.enabled = true; renderer.shadowMap.type = T.PCFSoftShadowMap;
+renderer.outputColorSpace = T.SRGBColorSpace; document.body.appendChild(renderer.domElement);
+const scene = new T.Scene(); scene.background = new T.Color(0xf3e3c8);
+const cam = new T.PerspectiveCamera(32, W / H, 0.1, 100);
+scene.add(new T.HemisphereLight(0xfff4e0, 0x8a7a66, 1.6));
+const sun = new T.DirectionalLight(0xffffff, 2.2); sun.position.set(3, 6, 5); sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048);
+Object.assign(sun.shadow.camera, { left: -5, right: 5, top: 5, bottom: -5 }); scene.add(sun);
+// small apartment kitchen set
+const floor = new T.Mesh(new T.PlaneGeometry(20, 20), R3.toon(0xc9a57a)); floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; scene.add(floor);
+const wall = new T.Mesh(new T.PlaneGeometry(20, 6), R3.toon(0xf3e3c8)); wall.position.set(0, 3, -2.2); wall.receiveShadow = true; scene.add(wall);
+const counter = R3.box(3.2, 0.9, 0.6, 0xe7d3b3); counter.position.set(1.6, 0.45, -1.85); scene.add(counter);
+const ctop = R3.box(3.3, 0.06, 0.66, 0xa8825a); ctop.position.set(1.6, 0.92, -1.85); scene.add(ctop);
+const win = R3.box(1.4, 1.1, 0.05, 0xbfe3f5); win.position.set(-1.6, 1.8, -2.15); scene.add(win);
+const toaster = R3.box(0.3, 0.2, 0.18, 0xd0d6dd); toaster.position.set(1.0, 1.05, -1.8); scene.add(toaster);
+const table = R3.box(1.4, 0.06, 0.8, 0xa8825a); table.position.set(-0.4, 0.75, 0.2); scene.add(table);
+for (const [x, z] of [[-1, -0.1], [0.2, -0.1], [-1, 0.5], [0.2, 0.5]]) { const l = R3.box(0.06, 0.72, 0.06, 0x7d5c3c); l.position.set(x, 0.36, z); scene.add(l); }
+const mug = R3.cap(0.05, 0.04, 0xc4161c); mug.position.set(-0.2, 0.85, 0.25); scene.add(mug);
+// cast: same colours as the 2D model sheet ("before" outfits)
+const ace = R3.build({ id: 'ace', height: 1.8, build: 'broad', skin: 0xc68a5e, top: 0x5b7a99, pants: 0x8f7f62, shoes: 0x3a2418, collar: true, hair: 'sidePart', hairColor: 0x2a1a12 });
+const tori = R3.build({ id: 'tori', height: 1.68, build: 'slim', skin: 0xf0c6a0, top: 0xc96f53, pants: 0x3d4a63, shoes: 0xd8bf94, hair: 'longWaves', hairColor: 0x7a4a24 });
+const max = R3.build({ id: 'max', height: 0.78, age: 'baby', skin: 0xdba67c, top: 0xa7c7e7, pants: 0xa7c7e7, shoes: 0xffffff, hair: 'messy', hairColor: 0x3b2416 });
+scene.add(ace, tori, max);
+window.render = (t, view = 0) => {
+  const ph = t * 5.2;
+  ace.position.set(-2.2 + (t % 3) * 0.9, 0, 0.9); ace.rotation.y = Math.PI / 2 * 0.75;
+  R3.pose(ace, R3.walk(ace, ph, 1)); R3.mouth(ace, 'grin'); R3.blink(ace, (t % 3.2) < 0.12);
+  tori.position.set(0.9, 0, 0.3); tori.rotation.y = -0.5;
+  R3.pose(tori, { shRx: -1.1, elR: 1.3, headY: 0.25, headZ: 0.05 }); R3.mouth(tori, Math.floor(t * 9) % 2 ? 'open' : 'smile'); R3.look(tori, -1, 0);
+  max.position.set(-0.4, 0.78, 0.25); max.rotation.y = 0.3; R3.pose(max, { shLz: 1.2, shRz: 1.2, elL: 0.6, elR: 0.6, hipL: -1.5, hipR: -1.5, knL: 1.4, knR: 1.4 }); R3.mouth(max, 'o');
+  const views = [[0.2, 1.7, 7.2, 0, 1.0, 0], [3.5, 1.4, 4.2, -0.3, 1.1, 0], [-2.8, 1.6, 3.4, 0, 1.1, 0.2]];
+  const v = views[view]; cam.position.set(v[0], v[1], v[2]); cam.lookAt(v[3], v[4], v[5]);
+  renderer.render(scene, cam);
+};
+render(0.4);
+</script></body></html>

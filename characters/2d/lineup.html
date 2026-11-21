@@ -1,0 +1,21 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+@font-face{font-family:Mont;src:url(../../fonts/Montserrat%5Bwght%5D.ttf);font-weight:100 900}
+html,body{margin:0;width:3000px;height:1500px;background:#f6efe2;font-family:Mont}
+</style></head><body><svg id="s" width="3000" height="1500"></svg>
+<script src="rig.js"></script><script src="sterlings.js"></script>
+<script>
+const R={draw,HAIR,HAT,PROPS,dog,INK}; const CAST=STERLINGS(R);
+let svg=`<defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfe9f7"/><stop offset="1" stop-color="#f6efe2"/></linearGradient></defs>
+<rect width="3000" height="1500" fill="url(#sky)"/>
+<rect y="1180" width="3000" height="320" fill="#e7dcc6"/><line x1="0" y1="1180" x2="3000" y2="1180" stroke="#2b2420" stroke-width="4"/>
+<text x="80" y="110" font-family="Mont" font-weight="900" font-size="78" fill="#2b2420">The Sterlings</text>
+<text x="84" y="160" font-family="Mont" font-weight="600" font-size="28" letter-spacing="6" fill="#7a6a58">CRESTVIEW HEIGHTS · SKYHAVEN · CHARACTER LINE-UP v1</text>
+<text x="2920" y="110" font-family="Mont" font-weight="700" font-size="26" letter-spacing="8" fill="#2b2420" text-anchor="end">SKYTRADE AVIATION</text>
+<rect x="2853" y="126" width="60" height="5" fill="#c4161c"/>`;
+const xs=[170,430,670,890,1120,1370,1620,1870,2130,2400]; 
+CAST.forEach((c,i)=>{ const x=xs[i]; svg+=`<g transform="translate(${x},1180)">${draw(c)}</g>`;
+  svg+=`<text x="${x}" y="1240" font-family="Mont" font-weight="800" font-size="26" fill="#2b2420" text-anchor="middle">${c.name.replace(/"/g,'&quot;').replace('Victoria &quot;Tori&quot; Sterling','Tori Sterling')}</text>`;
+  const words=[];c.role.split(' · ').forEach(w=>{let line='';w.split(' ').forEach(t=>{if((line+' '+t).trim().length>18){words.push(line.trim());line=t}else line+=' '+t});words.push(line.trim())}); words.forEach((w,j)=>svg+=`<text x="${x}" y="${1276+j*30}" font-family="Mont" font-weight="500" font-size="19" fill="#6b5e50" text-anchor="middle">${w}</text>`);});
+svg+=`<g transform="translate(2720,1180)">${dog(1.0)}</g><text x="2720" y="1240" font-family="Mont" font-weight="800" font-size="26" fill="#2b2420" text-anchor="middle">Duke</text><text x="2720" y="1276" font-family="Mont" font-weight="500" font-size="19" fill="#6b5e50" text-anchor="middle">the family dog</text><text x="2720" y="1306" font-family="Mont" font-weight="500" font-size="19" fill="#6b5e50" text-anchor="middle">flies in the cabin</text>`;
+document.getElementById('s').innerHTML=svg;
+</script></body></html>

@@ -1,0 +1,11 @@
+# Blender autosaves and backups
+*.blend1
+*.blend2
+*.blend@
+# Rendered frame sequences (keep them out of Git; store in R2)
+renders/**/*.png
+renders/**/*.exr
+renders/**/*.jpg
+__pycache__/
+.DS_Store
+Thumbs.db
