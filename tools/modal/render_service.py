@@ -120,7 +120,12 @@ def web():
     api = FastAPI(title="Skyhaven render")
 
     def auth(authorization: str = Header(default="")):
-        if authorization != f"Bearer {os.environ['SKYHAVEN_RENDER_TOKEN']}":
+        import secrets as _secrets
+        sent = authorization.strip()
+        if sent.lower().startswith("bearer "):          # accept "Bearer <token>" or the bare token
+            sent = sent[7:].strip()
+        expected = os.environ.get("SKYHAVEN_RENDER_TOKEN", "").strip()
+        if not expected or not _secrets.compare_digest(sent, expected):
             raise HTTPException(status_code=401, detail="bad token")
 
     @api.post("/jobs", dependencies=[Depends(auth)])
