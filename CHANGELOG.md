@@ -1,6 +1,7 @@
 # Changelog
 
 ## 2026-11-22
+- Breakfast test made to feel directed and lived in: window with sunrise and skyline, floor lamp, picture, ticking clock, bookshelf, plant, rug; teapot, toast, saucer and the napkin drone sketch on the table. Soft warm window key, low sun, dim cool fill, lamp practical and rim light. Slow push-in on the wide camera with a cut to a close-up for the sip. Face acting: smiles, brow lifts, extra blinks, and an end turn back to the cup and sketch.
 - Mug test: fixed the awkward lift at seconds 4–5 (elbow tucked back then jumped up, body jolted back). The cup now follows one smooth curved path close to the body, keyed every 2 frames, with the elbow swing solved per frame and the lean back spread over a second.
 - Sip matched to a reference photo: cup follows his face, handle forward-right so the hand sits in front of and beside the cup with the knuckles out, elbow out to the side and below the shoulder, gentle tilt (max 31°), relaxed lean back, head nearly upright and turned to look out, eyes open.
 - Mug test reworked for a human grip and drink: handle turned to his right hand, index and middle fingers through the handle with the thumb on top, hand keyed relative to the mug so it never slips; rim placed on the lower lip, mug tipped 10° → 56° for the sip, head tilts back, jaw opens, eyes close; arms hang naturally when standing. Fixed the hand axes used for all hand poses, and the mug prop (body was 4.75 cm too low). Close-ups in `characters/3d/tests/`.
