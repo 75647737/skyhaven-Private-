@@ -66,7 +66,15 @@ Textures are packed into the .blend, so it opens anywhere.
 - MakeHuman base mesh, targets and the asset packs above: **CC0** (no credit required). Only CC0 packs are used.
 - MPFB2 is a GPL-3.0 tool; it is not shipped in this repo, and characters made with it are not covered by the GPL.
 
-## Victoria "Tori" Sterling (`tori_v002.blend`) — use this one
+## Victoria "Tori" Sterling (`tori_v003.blend`) — use this one
+
+v003 adds to v002:
+- **Face controls:** the 52 ARKit face units (`eyeBlinkLeft`, `mouthSmileLeft`, `browInnerUp` …) and 22 Microsoft visemes (`aa_ah_ax_01`, `f_v_18` …) from the CC0 MakeHuman packs `faceunits01` and `visemes01`, as shape keys on `Tori.body`. Each is driven by a slider on the rig, `Tori.rig["face_<name>"]` (0–1, library-overridable), so scenes that link Tori can animate them. If a driver ever shows as invalid, set `driver.is_valid = True` and change frame.
+- **Hairline:** 1,400 strands added along a smooth line up to 1.2 cm below the old hairline; each copies the sweep of its nearest strand.
+- **Shoes:** rebuilt with a 6.2 cm heel counter and 4 cm sides; opening edge smoothed along itself. Sides under the arch are still low.
+- **Hair back:** strands smoothed below the top 30 %, removing the band at shoulder height.
+
+### v002
 
 v002 adds to v001 below: Rigify rig `Tori.rig` (MPFB, 930 bones); dress, straps and belt weighted from the body, the skirt blended between `DEF-spine` and both thighs so it stays one piece; eyes on `DEF-eye.*`, lashes split per side on `DEF-lid.T.*.002` (they close with blinks), hair and brows on the head bone. Nude pumps (#d8bf94, `Tori.shoe.*` + heel posts) bone-parented to the feet. Action `Tori_heels_stance` (feet rolled 38° on `foot_heel_ik`, torso up 6 cm) is her default stance — keep it in every scene so the heels touch the floor. Everything is in the `Tori` collection for linking.
 
