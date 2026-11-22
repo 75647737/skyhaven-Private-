@@ -1,6 +1,7 @@
 # Changelog
 
 ## 2026-11-22
+- Mug test reworked for a human grip and drink: handle turned to his right hand, index and middle fingers through the handle with the thumb on top, hand keyed relative to the mug so it never slips; rim placed on the lower lip, mug tipped 10° → 56° for the sip, head tilts back, jaw opens, eyes close; arms hang naturally when standing. Fixed the hand axes used for all hand poses, and the mug prop (body was 4.75 cm too low). Close-ups in `characters/3d/tests/`.
 - First action test: `blender/episodes/tests/ace_sit_mug_test.blend` links Ace v007 (library override) and animates him sitting down at a table, picking up a mug and drinking (8 s). Notes in `blender/episodes/tests/README.md`. Ace's master collection renamed to `Ace` (widgets in `WGTS_Ace.rig`) so it can be linked.
 - Ace idle: `blender/characters/ace_v007.blend` adds `Ace_idle_loop`, a 10 s looping action (relaxed arms, breathing, weight shift, head turns, eye glances, blinks incl. a double blink). Stills in `characters/3d/ace_v007_idle_*.png`.
 - Fix v006: his body shape keys had been reset to 0, losing his build under the clothes; values restored from v005. Removed the v006 pose test image, which showed that bug.
