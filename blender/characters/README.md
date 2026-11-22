@@ -66,7 +66,11 @@ Textures are packed into the .blend, so it opens anywhere.
 - MakeHuman base mesh, targets and the asset packs above: **CC0** (no credit required). Only CC0 packs are used.
 - MPFB2 is a GPL-3.0 tool; it is not shipped in this repo, and characters made with it are not covered by the GPL.
 
-## Victoria "Tori" Sterling (`tori_v001.blend`) — work in progress
+## Victoria "Tori" Sterling (`tori_v002.blend`) — use this one
+
+v002 adds to v001 below: Rigify rig `Tori.rig` (MPFB, 930 bones); dress, straps and belt weighted from the body, the skirt blended between `DEF-spine` and both thighs so it stays one piece; eyes on `DEF-eye.*`, lashes split per side on `DEF-lid.T.*.002` (they close with blinks), hair and brows on the head bone. Nude pumps (#d8bf94, `Tori.shoe.*` + heel posts) bone-parented to the feet. Action `Tori_heels_stance` (feet rolled 38° on `foot_heel_ik`, torso up 6 cm) is her default stance — keep it in every scene so the heels touch the floor. Everything is in the `Tori` collection for linking.
+
+### v001 notes
 
 Ace's wife. Look direction from the client: beautiful and feminine, curvy hourglass figure (narrow waist, fuller hips), long wavy brown hair, a fitted dress and heels. Reference photos were used for style only; the face is original.
 

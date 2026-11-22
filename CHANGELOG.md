@@ -1,6 +1,7 @@
 # Changelog
 
 ## 2026-11-22
+- Tori v002: `tori_v002.blend` — Rigify rig with clothes, eyes, lashes and hair attached; nude pumps on a 5.7 cm heels stance (`Tori_heels_stance`); straps now join the bodice; `Tori` collection for linking.
 - Tori v001 (work in progress): `blender/characters/tori_v001.blend` — MPFB hourglass body and original face, procedural skin and eyes, script-grown long wavy hair, brows and lashes, original terracotta wrap-style dress with navy belt. Heels and rig still to do. Notes in `blender/characters/README.md`.
 - Breakfast test made to feel directed and lived in: window with sunrise and skyline, floor lamp, picture, ticking clock, bookshelf, plant, rug; teapot, toast, saucer and the napkin drone sketch on the table. Soft warm window key, low sun, dim cool fill, lamp practical and rim light. Slow push-in on the wide camera with a cut to a close-up for the sip. Face acting: smiles, brow lifts, extra blinks, and an end turn back to the cup and sketch.
 - Mug test: fixed the awkward lift at seconds 4–5 (elbow tucked back then jumped up, body jolted back). The cup now follows one smooth curved path close to the body, keyed every 2 frames, with the elbow swing solved per frame and the lean back spread over a second.
