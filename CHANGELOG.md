@@ -1,6 +1,7 @@
 # Changelog
 
 ## 2026-11-22
+- Mug test: fixed the awkward lift at seconds 4–5 (elbow tucked back then jumped up, body jolted back). The cup now follows one smooth curved path close to the body, keyed every 2 frames, with the elbow swing solved per frame and the lean back spread over a second.
 - Sip matched to a reference photo: cup follows his face, handle forward-right so the hand sits in front of and beside the cup with the knuckles out, elbow out to the side and below the shoulder, gentle tilt (max 31°), relaxed lean back, head nearly upright and turned to look out, eyes open.
 - Mug test reworked for a human grip and drink: handle turned to his right hand, index and middle fingers through the handle with the thumb on top, hand keyed relative to the mug so it never slips; rim placed on the lower lip, mug tipped 10° → 56° for the sip, head tilts back, jaw opens, eyes close; arms hang naturally when standing. Fixed the hand axes used for all hand poses, and the mug prop (body was 4.75 cm too low). Close-ups in `characters/3d/tests/`.
 - First action test: `blender/episodes/tests/ace_sit_mug_test.blend` links Ace v007 (library override) and animates him sitting down at a table, picking up a mug and drinking (8 s). Notes in `blender/episodes/tests/README.md`. Ace's master collection renamed to `Ace` (widgets in `WGTS_Ace.rig`) so it can be linked.
