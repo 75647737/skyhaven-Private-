@@ -66,7 +66,15 @@ Textures are packed into the .blend, so it opens anywhere.
 - MakeHuman base mesh, targets and the asset packs above: **CC0** (no credit required). Only CC0 packs are used.
 - MPFB2 is a GPL-3.0 tool; it is not shipped in this repo, and characters made with it are not covered by the GPL.
 
-## Victoria "Tori" Sterling (`tori_v003.blend`) — use this one
+## Victoria "Tori" Sterling (`tori_v004.blend`) — use this one
+
+v004: refined to read as a warm wife and mum rather than a glamour look.
+- **Softer lips:** natural rose (#b4645e) kept inside the lip line (`lip_tighten` map range on the lip mask), slightly thinner lips; gentle resting smile (`mouth-angles-up` 0.55); softer brown brows.
+- **Modest neckline:** dress rebuilt with the V bottom at 1.26 m (was 1.195); weights redone (body transfer + hip/thigh skirt blend).
+- **Hair:** soft waves restored (v003's smoothing had flattened them).
+- **Postures** (actions with fake users; all keep the heels stance and use IK arms): `Tori_pose_relaxed` (hands softly clasped in front, weight on one leg, head tilt, smile), `Tori_pose_hand_on_hip` (left hand on the waist under the belt, hip shift), `Tori_pose_wave` (right hand raised in greeting, big smile). Assign one to `Tori.rig` (or as an NLA strip) to use it; `Tori_heels_stance` is the neutral default.
+
+### v003
 
 v003 adds to v002:
 - **Face controls:** the 52 ARKit face units (`eyeBlinkLeft`, `mouthSmileLeft`, `browInnerUp` …) and 22 Microsoft visemes (`aa_ah_ax_01`, `f_v_18` …) from the CC0 MakeHuman packs `faceunits01` and `visemes01`, as shape keys on `Tori.body`. Each is driven by a slider on the rig, `Tori.rig["face_<name>"]` (0–1, library-overridable), so scenes that link Tori can animate them. If a driver ever shows as invalid, set `driver.is_valid = True` and change frame.
