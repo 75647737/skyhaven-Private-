@@ -1,6 +1,26 @@
 # Master characters
 
-## Ace Sterling, rigged (`ace_v006.blend`) — use this one
+## Ace Sterling, rigged with idle (`ace_v007.blend`) — use this one
+
+v006 plus a looping idle action, so he never stands frozen.
+
+| | |
+|---|---|
+| Action | `Ace_idle_loop` on `Ace.rig` (fake user, so it is kept even when unassigned). 240 frames = 10 s at 24 fps, frames 1 and 241 match, every curve has a Cycles modifier so it loops forever |
+| Base pose | arms down and relaxed (arms in FK, `IK_FK` keyed to 1), soft elbows, hands turned slightly in. Legs stay IK so the feet stay planted |
+| Breathing | 3 breaths per loop (every 80 frames): chest lifts about 1°, shoulders rise about 1.6° |
+| Weight shift | one slow hip-to-hip shift per loop: torso slides ±9 mm, hips tilt about 1.8°, chest counter-tilts |
+| Head | small turns and tilts at frames 60, 130, 190 (up to 7°), neck takes about a third |
+| Eyes | quick glances (3-frame moves, then holds) just before each head turn, via `eye_common` |
+| Blinks | at frames 34, 98 + 105 (double blink), 168, 222: close in 2 frames, hold 1, open in 4. Done with the lid controls, so the lashes follow |
+
+In an episode file, link Ace, make a library override, and add `Ace_idle_loop` as an NLA strip under any acting; key acting on top in a new layer.
+
+Preview: `ace_v007_idle_preview.mp4` (viewport render, 960×540) was made from this file; it is not stored in the repo.
+
+## Ace Sterling, rigged (`ace_v006.blend`)
+
+**Fixed 2026-11-22:** the first v006 had all body shape keys set to 0, which removed Ace's body shape (MPFB keeps his build and face proportions as shape keys), so the body under the clothes was the plain MakeHuman base and didn't match the clothes. The 21 shape key values are now copied back from v005.
 
 v005 below with a **Rigify control rig** in place of the plain MPFB skeleton, so he can be animated.
 
