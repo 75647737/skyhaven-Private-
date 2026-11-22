@@ -117,3 +117,21 @@ ls._mpfb_data = r + r"\data"; ls._mpfb_root = r
 
 Short and chunky, about 2½ heads tall (1.04 m), built in Blender straight from the 2D sheet's measurements (1 sheet unit = 2.5 mm). Simple rounded shapes: big head with large eyes (white, iris, pupil, highlight), curve brows and smile, hair cap with a front hairline, sweater with collar, hem and cable lines, mitt hands, short legs, rounded shoes. Flat 3-tone cel materials (`AC_*`) and an inverted-hull outline (`AC_outline`).
 Rig `AC.rig`: root, hips, chest, head, arm/hand and leg/foot per side; every part is bone-parented (rigid), so posing is quick. Polished: rounded tapered sleeves with cuffs; mitt hands with a thumb on the same bone as the sleeve, so they never separate; a fringe showing his side part; face features, brows and sweater cables snapped onto the real surfaces; full hair at the back. Turnaround (front, three-quarter, side, back): `characters/2d/ace_cartoon_turnaround.png`.
+
+#### Cartoon Ace rig and controls
+
+Bones (`AC.rig`): root, hips, chest, head; per side `upper_arm`, `forearm`, `hand`, `thumb`, `leg`, `foot`; face bones `eye`, `pupil`, `brow` per side and `mouth`. The sweater sleeve is one mesh skinned to upper arm + forearm (smooth bend at the elbow); cuff, mitt hand and thumb ride on forearm / hand / thumb.
+
+Face sliders are custom properties on `AC.rig` (keyframe them like any value):
+
+| Slider | Range | Does |
+|---|---|---|
+| `mouth` | 0–8 | 0 smile, 1 rest, 2 A (ah, ai, i), 3 E (ee), 4 O, 5 U/W, 6 M/B/P, 7 F/V, 8 frown. Key with **Constant** interpolation for lip-sync |
+| `blink`, `blink_L`, `blink_R` | 0–1 | both eyes / wink |
+| `look_x`, `look_y` | −1–1 | pupils right/left, up/down (screen directions when he faces camera) |
+| `brows` | −1–1 | brows down / up |
+| `brow_tilt` | −1–1 | angry (−) / worried (+) |
+
+The drivers use no Python expressions (only `max`/`min` for blink, otherwise a plain slider input mapped through an F-curve), so they work even with "Auto Run Python Scripts" off. Don't hide `AC.rig` from renders: that also stops the face bones from updating in the render.
+
+Test action `AC_wave_talk` (96 frames): right-arm wave with elbow and wrist, head tilt, brows up, two blinks, talking mouth.
