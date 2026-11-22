@@ -65,3 +65,25 @@ Textures are packed into the .blend, so it opens anywhere.
 ### Licences
 - MakeHuman base mesh, targets and the asset packs above: **CC0** (no credit required). Only CC0 packs are used.
 - MPFB2 is a GPL-3.0 tool; it is not shipped in this repo, and characters made with it are not covered by the GPL.
+
+## Victoria "Tori" Sterling (`tori_v001.blend`) — work in progress
+
+Ace's wife. Look direction from the client: beautiful and feminine, curvy hourglass figure (narrow waist, fuller hips), long wavy brown hair, a fitted dress and heels. Reference photos were used for style only; the face is original.
+
+| | |
+|---|---|
+| Body | MPFB2 (no MakeHuman asset packs on this PC): female, height macro 0.572 → 1.69 m; waist, hip, bust and buttock targets; face targets for an oval face, slimmer nose, cheekbones, almond eyes, gentle smile, slender neck. All values are shape keys on `Tori.body` |
+| Skin | `Tori_skin`: procedural (noise-varied #dca07a–#eab690, subsurface, fine bump), lips coloured from MPFB's `lips` vertex group (`lip_mask` attribute) |
+| Eyes | `Tori.eye.L/R`: spheres on MPFB's eye helpers, procedural brown iris, glossy coat |
+| Hair | `Tori.hair`: 13,200 Blender hair curves grown by script from the `scalp` group — side part on her left, soft waves, collision with head/neck/shoulders, chestnut gradient (`Tori_hair`). `Tori.brows`, `Tori.lashes`: short curves on the skin surface |
+| Dress | `Tori.dress`: original terracotta (#b85a44 / blueprint #c96f53) fitted bodice with V-neck and gathered bust, flared knee-length skirt; `Tori.dress_straps`; navy `Tori.belt` (#3d4a63) |
+| Not done | heels, rig, face controls; straps don't quite meet the bodice; hairline sits a little high |
+
+**Why not the MakeHuman packs:** their server in Sweden ran at 5–10 KB/s from this connection (1.1 GB ≈ two days) and BlenderKit's free library has no long hair, dresses or heels, so hair, brows, lashes, skin, eyes and dress were built in Blender.
+
+**Store-Blender path limit:** MPFB fails on this PC with "target … does not exist" because the Microsoft Store Blender path is over 260 characters. Before using MPFB in a new Blender session run:
+```python
+from bl_ext.blender_org.mpfb.services.locationservice import LocationService as ls
+r = r"C:\Users\DELL\AppData\Roaming\Blender Foundation\Blender\5.3\extensions\blender_org\mpfb"
+ls._mpfb_data = r + r"\data"; ls._mpfb_root = r
+```
