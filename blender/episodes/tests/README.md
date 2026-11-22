@@ -31,3 +31,18 @@ Timeline: 1–12 stand · 12–60 sit down · 60–84 settle and look at the mug
 - When checking a single frame with a different camera, remove the camera markers first; markers override the active camera.
 
 The set pieces are placeholders; swap them for BlenderKit or Poly Haven furniture when the real flat is built.
+
+## `tori_mixamo_test.blend` — Mixamo motion on Tori
+
+Links Tori from `../../characters/tori_v003.blend` (library override) and imports Mixamo FBX files (Mixamo's own mesh is hidden; only its skeleton is used as the source).
+
+| Action on `Tori.rig` | Source | Result |
+|---|---|---|
+| `Tori_mx_sitting` | `Female Sitting Pose.fbx` | pose matches (bone directions within 6°); **skirt does not drape over the lap** — needs cloth simulation |
+| `Tori_mx_catwalk` | `Catwalk Twist L To Twist R.fbx` (151 frames, keyed every 2nd frame) | works standing, in heels; feet planted on the floor |
+
+**How the retarget works:** 52 bone pairs (spine, neck, head, shoulders, arms, hands, all fingers, legs, feet, toes) map onto Tori's FK controls (`*_fk`, `spine_fk.00x`, `torso`); arms and legs are switched to FK. For each pair a fixed offset is measured once from the rest poses (Mixamo T-pose vs Tori A-pose: align the bone directions, keep the remainder as the offset); each frame the control's world rotation = Mixamo bone world rotation × offset, solved parent before child. Hips move with Mixamo's hips scaled by hip height, then the whole action is lifted so the lowest foot touches the floor.
+
+**Mixamo download settings:** Format **FBX Binary (.fbx)** (FBX 7.x; `character.fbx` / `character (1).fbx` are FBX 6.1 and Blender can't import them), **24 fps**, Skin either way.
+
+**Importing FBX by script** needs a 3D-view context and an active object, but must not pin the active object (the importer switches to the new armature itself).

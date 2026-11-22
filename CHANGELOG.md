@@ -1,6 +1,7 @@
 # Changelog
 
 ## 2026-11-22
+- Mixamo on Tori: `blender/episodes/tests/tori_mixamo_test.blend` links Tori v003 and retargets Mixamo motion onto her FK rig (52 bone pairs, rest-pose offsets): sitting pose and a 151-frame catwalk in heels. The skirt needs cloth simulation for sitting. Notes in `blender/episodes/tests/README.md`.
 - Tori v003: `tori_v003.blend` — 74 face shape keys (ARKit face units + visemes) driven by rig sliders `face_*` for linked scenes; lower, smooth hairline; higher shoe sides; smoother back of the hair.
 - Tori v002: `tori_v002.blend` — Rigify rig with clothes, eyes, lashes and hair attached; nude pumps on a 5.7 cm heels stance (`Tori_heels_stance`); straps now join the bodice; `Tori` collection for linking.
 - Tori v001 (work in progress): `blender/characters/tori_v001.blend` — MPFB hourglass body and original face, procedural skin and eyes, script-grown long wavy hair, brows and lashes, original terracotta wrap-style dress with navy belt. Heels and rig still to do. Notes in `blender/characters/README.md`.
