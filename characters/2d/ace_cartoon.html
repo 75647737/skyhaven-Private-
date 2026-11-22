@@ -41,6 +41,8 @@ h2 { font-family: var(--display); font-weight: 500; font-size: 1.15rem; margin: 
 .notes p { margin: 6px 0 0; color: var(--muted); font-size: .92rem; }
 .heights svg { width: 100%; height: auto; display: block; }
 .short * { vector-effect: non-scaling-stroke; }
+.turn { overflow-x: auto; margin-top: 10px; border-radius: 10px; }
+.turn img { display: block; width: 100%; min-width: 560px; height: auto; }
 @media (prefers-reduced-motion: no-preference) { .blink { animation: blink 4.5s infinite; transform-origin: center; transform-box: fill-box; } }
 @keyframes blink { 0%, 94%, 100% { transform: scaleY(1); } 96% { transform: scaleY(.1); } }
 </style>
@@ -72,6 +74,12 @@ h2 { font-family: var(--display); font-weight: 500; font-size: 1.15rem; margin: 
       </section>
     </div>
   </div>
+
+  <section class="panel" aria-label="Turnaround">
+    <h2>Turnaround</h2>
+    <div class="label">Front · three-quarter · side · back, rendered flat from the 3D cartoon model</div>
+    <div class="turn"><img src="ace_cartoon_turnaround.png" alt="Cartoon Ace from the front, three-quarter, side and back" width="2500" height="940"></div>
+  </section>
 
   <section class="notes">
     <div class="panel"><div class="label">Line</div><p>One outline weight (3 px at sheet scale), round joins, darker than any fill. No inner lines on the face except brows, nose tip and mouth, so lip-sync swaps stay clean.</p></div>
