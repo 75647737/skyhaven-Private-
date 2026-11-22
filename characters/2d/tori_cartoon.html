@@ -1,0 +1,206 @@
+<title>Tori Cartoon Model Sheet</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Inter:wght@400;500;600&display=swap">
+<style>
+/* Layout: same studio model sheet as Ace's, so the two read as one family. Big front view left, expressions and palette right. */
+:root {
+  --paper: #f7f3f1; --card: #ffffff; --ink: #2a2222; --muted: #6e6262; --line: #e6dcd8;
+  --sky: #f5e3dc; --accent: #c96f53;
+  --display: "Fredoka", "Trebuchet MS", system-ui, sans-serif; --body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --paper: #1a1516; --card: #241d1e; --ink: #f1e9e7; --muted: #b3a5a2; --line: #3a2f30; --sky: #33272a; --accent: #e09178; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --paper: #1a1516; --card: #241d1e; --ink: #f1e9e7; --muted: #b3a5a2; --line: #3a2f30; --sky: #33272a; --accent: #e09178; color-scheme: dark }
+body { background: var(--paper); color: var(--ink); font-family: var(--body); line-height: 1.55; }
+.wrap { max-width: 1100px; margin: 0 auto; padding-block: 28px 56px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 28px; }
+header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; border-bottom: 2px solid var(--line); padding-bottom: 14px; }
+h1 { font-family: var(--display); font-weight: 600; font-size: clamp(1.8rem, 4vw, 2.6rem); margin: 0; text-wrap: balance; }
+.sheetid { font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.lede { margin: 0; color: var(--muted); max-width: 62ch; }
+.grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 24px; align-items: start; }
+@media (max-width: 820px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+.panel { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px; min-width: 0; }
+.hero { background: linear-gradient(var(--sky), var(--card) 78%); }
+.hero svg { display: block; width: 100%; max-width: 360px; height: auto; margin: 0 auto; }
+h2 { font-family: var(--display); font-weight: 500; font-size: 1.15rem; margin: 0 0 12px; }
+.label { font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.expr { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 520px) { .expr { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.expr figure { margin: 0; display: grid; gap: 6px; justify-items: center; text-align: center; }
+.expr svg { width: 100%; max-width: 150px; height: auto; background: var(--sky); border-radius: 12px; }
+.expr figcaption { font-size: .85rem; }
+.expr figcaption span { display: block; color: var(--muted); font-size: .76rem; }
+.right { display: grid; gap: 24px; min-width: 0; }
+.swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 10px; }
+.sw { display: grid; grid-template-columns: 34px 1fr; gap: 8px; align-items: center; font-size: .82rem; }
+.sw i { width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--line); display: block; }
+.sw code { color: var(--muted); font-size: .75rem; }
+.notes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 820px) { .notes { grid-template-columns: minmax(0, 1fr); } }
+.notes p { margin: 6px 0 0; color: var(--muted); font-size: .92rem; }
+.heights svg { width: 100%; height: auto; display: block; }
+.short * { vector-effect: non-scaling-stroke; }
+.turn { overflow-x: auto; margin-top: 10px; border-radius: 10px; }
+.turn img { display: block; width: 100%; min-width: 560px; height: auto; }
+@media (prefers-reduced-motion: no-preference) { .blink { animation: blink 5s infinite; transform-origin: center; transform-box: fill-box; } }
+@keyframes blink { 0%, 94%, 100% { transform: scaleY(1); } 96% { transform: scaleY(.1); } }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Tori Sterling · cartoon</h1>
+    <span class="sheetid">Skyhaven model sheet · TS-2D-01 · “before” years</span>
+  </header>
+  <p class="lede">Victoria “Tori” Sterling, Ace’s wife: practical, warm, keeps the family budget. The cartoon is drawn to the same rules as cartoon Ace: short and chunky, about 2½ heads tall, a big head so her face reads on a phone screen. Her own look: long wavy chestnut hair with a side part, lashes, a terracotta dress with a navy belt, and nude low heels.</p>
+
+  <div class="grid">
+    <section class="panel hero" aria-label="Front view">
+      <div class="label">Front view · warm smile</div>
+      <div id="front"></div>
+    </section>
+    <div class="right">
+      <section class="panel" aria-label="Expressions">
+        <h2>Expressions</h2>
+        <div class="expr" id="expr"></div>
+      </section>
+      <section class="panel" aria-label="Palette">
+        <h2>Palette</h2>
+        <div class="swatches" id="swatches"></div>
+      </section>
+      <section class="panel heights" aria-label="Proportions">
+        <h2>Proportions</h2>
+        <div id="heights"></div>
+      </section>
+    </div>
+  </div>
+
+  <section class="panel" aria-label="Turnaround" id="turnPanel" hidden>
+    <h2>Turnaround</h2>
+    <div class="label">Front · three-quarter · side · back, rendered flat from the 3D cartoon model</div>
+    <div class="turn"><img id="turnImg" src="tori_cartoon_turnaround.png" alt="Cartoon Tori from the front, three-quarter, side and back" width="2500" height="940"></div>
+  </section>
+
+  <section class="notes">
+    <div class="panel"><div class="label">Line</div><p>Same single outline weight as Ace, round joins, darker than any fill. Lashes are three short flicks at the outer corner of each eye, never a full fringe.</p></div>
+    <div class="panel"><div class="label">Head and hair</div><p>About 2½ heads tall, a touch shorter than Ace. Softer, rounder jaw. The hair is one long shape behind the head with a wavy hem at the shoulders, plus a side-swept fringe parted on her right.</p></div>
+    <div class="panel"><div class="label">Same Tori in 3D</div><p>The 3D cartoon Tori is built from this sheet with the same cel shading, outline and rig as cartoon Ace: elbows, wrists, the 9-shape mouth set, blink, look and brows.</p></div>
+  </section>
+</div>
+
+<script>
+const C = { skin: '#f0c6a0', skinShade: '#d9a37c', hair: '#7a4a24', hairShade: '#5e3719', hairLight: '#9a6236', dress: '#c96f53', dressShade: '#ad5a41',
+  belt: '#3d4a63', shoes: '#d8bf94', shoeShade: '#bfa47a', eyeWhite: '#fbfaf7', iris: '#5a3a1e', line: '#2a1f1c', lips: '#c0645a', mouth: '#7a2e28', tongue: '#e07c74', blush: '#f2a58e' };
+
+const EXPR = {
+  smile:    { brow: [-2, 2],  lids: 0,   mouth: 'smile', look: [0, 0] },
+  delighted:{ brow: [-6, -4], lids: .55, mouth: 'open',  look: [0, 0] },
+  sceptical:{ brow: [4, -6],  lids: .3,  mouth: 'smirk', look: [-3, 0] },
+  surprised:{ brow: [-9, -9], lids: 0,   mouth: 'o',     look: [0, 0] },
+  tender:   { brow: [5, -1],  lids: .2,  mouth: 'soft',  look: [0, 3] },
+};
+
+function hairBack(cx = 150, cy = 112) {
+  const s = `stroke="${C.line}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"`;
+  // long hair behind the head down to the shoulders, wavy hem
+  return `<path d="M${cx - 64} ${cy - 30} C${cx - 82} ${cy + 30} ${cx - 92} ${cy + 96} ${cx - 86} ${cy + 140}
+    q10 10 18 0 q10 10 20 -2 q10 8 18 -4 L${cx + 30} ${cy + 136} q10 10 18 -2 q10 10 20 0 q10 10 18 4
+    C${cx + 94} ${cy + 96} ${cx + 84} ${cy + 30} ${cx + 66} ${cy - 30} Z" fill="${C.hairShade}" ${s}/>`;
+}
+
+function head(e, cx = 150, cy = 112) {
+  const s = `stroke="${C.line}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"`;
+  const ex = 25, ey = cy + 6;
+  let o = '';
+  o += `<ellipse cx="${cx - 58}" cy="${cy + 14}" rx="9" ry="13" fill="${C.skin}" ${s}/><ellipse cx="${cx + 58}" cy="${cy + 14}" rx="9" ry="13" fill="${C.skin}" ${s}/>`;
+  // softer oval face, rounder chin
+  o += `<path d="M${cx - 56} ${cy - 16} C${cx - 58} ${cy + 40} ${cx - 36} ${cy + 74} ${cx} ${cy + 74} C${cx + 36} ${cy + 74} ${cx + 58} ${cy + 40} ${cx + 56} ${cy - 16} C${cx + 54} ${cy - 66} ${cx - 54} ${cy - 66} ${cx - 56} ${cy - 16}Z" fill="${C.skin}" ${s}/>`;
+  // blush
+  o += `<ellipse cx="${cx - 36}" cy="${cy + 34}" rx="10" ry="6" fill="${C.blush}" opacity=".55"/><ellipse cx="${cx + 36}" cy="${cy + 34}" rx="10" ry="6" fill="${C.blush}" opacity=".55"/>`;
+  // hair top and side-swept fringe (part on her right = viewer's left), long locks framing the face
+  o += `<path d="M${cx - 60} ${cy + 10} C${cx - 70} ${cy - 46} ${cx - 44} ${cy - 84} ${cx - 2} ${cy - 86} C${cx + 46} ${cy - 88} ${cx + 72} ${cy - 50} ${cx + 62} ${cy + 20}
+    C${cx + 56} ${cy - 10} ${cx + 48} ${cy - 30} ${cx + 30} ${cy - 40} C${cx + 6} ${cy - 30} ${cx - 16} ${cy - 40} ${cx - 30} ${cy - 56}
+    C${cx - 40} ${cy - 40} ${cx - 50} ${cy - 20} ${cx - 60} ${cy + 10}Z" fill="${C.hair}" ${s}/>`;
+  o += `<path d="M${cx - 30} ${cy - 56} C${cx - 26} ${cy - 70} ${cx - 18} ${cy - 80} ${cx - 6} ${cy - 84}" fill="none" stroke="${C.hairLight}" stroke-width="3" stroke-linecap="round"/>`;
+  o += `<path d="M${cx + 10} ${cy - 66} C${cx + 30} ${cy - 62} ${cx + 46} ${cy - 50} ${cx + 52} ${cy - 30}" fill="none" stroke="${C.hairLight}" stroke-width="3" stroke-linecap="round"/>`;
+  // eyes with lashes
+  for (const side of [-1, 1]) {
+    const x = cx + side * ex;
+    o += `<g class="blink"><ellipse cx="${x}" cy="${ey}" rx="15" ry="18" fill="${C.eyeWhite}" ${s}/>`;
+    o += `<circle cx="${x + e.look[0]}" cy="${ey + 2 + e.look[1]}" r="10" fill="${C.iris}"/><circle cx="${x + e.look[0]}" cy="${ey + 2 + e.look[1]}" r="5" fill="#120a06"/>`;
+    o += `<circle cx="${x + e.look[0] - 4}" cy="${ey - 2 + e.look[1]}" r="3.2" fill="#fff"/></g>`;
+    if (e.lids > 0) {
+      const ly = ey - 18 + 36 * e.lids;
+      o += `<path d="M${x - 16} ${ey - 2} C${x - 16} ${ey - 24} ${x + 16} ${ey - 24} ${x + 16} ${ey - 2} L${x + 16} ${ly} C${x + 6} ${ly + 3} ${x - 6} ${ly + 3} ${x - 16} ${ly}Z" fill="${C.skin}" ${s}/>`;
+    }
+    // three lash flicks at the outer corner
+    const ox = x + side * 13, oy = ey - 12 + (e.lids > 0 ? 36 * e.lids * .5 : 0);
+    for (let k = 0; k < 3; k++) o += `<path d="M${ox - side * k * 4} ${oy - k * 2} l${side * 7} ${-5 - k}" stroke="${C.line}" stroke-width="2.6" stroke-linecap="round"/>`;
+    const [inner, outer] = e.brow;
+    o += `<path d="M${x - side * 13} ${ey - 26 + inner} Q${x} ${ey - 33 + (inner + outer) / 2} ${x + side * 15} ${ey - 27 + outer}" fill="none" stroke="${C.hairShade}" stroke-width="4" stroke-linecap="round"/>`;
+  }
+  o += `<path d="M${cx - 5} ${cy + 34} C${cx - 7} ${cy + 40} ${cx + 7} ${cy + 40} ${cx + 5} ${cy + 34}" fill="none" stroke="${C.skinShade}" stroke-width="3" stroke-linecap="round"/>`;
+  const my = cy + 52;
+  const m = {
+    smile: `<path d="M${cx - 18} ${my - 4} C${cx - 9} ${my + 9} ${cx + 9} ${my + 9} ${cx + 18} ${my - 4} C${cx + 9} ${my + 3} ${cx - 9} ${my + 3} ${cx - 18} ${my - 4}Z" fill="${C.lips}" ${s}/>`,
+    soft: `<path d="M${cx - 13} ${my} C${cx - 5} ${my + 6} ${cx + 5} ${my + 6} ${cx + 13} ${my} C${cx + 5} ${my + 2} ${cx - 5} ${my + 2} ${cx - 13} ${my}Z" fill="${C.lips}" ${s}/>`,
+    smirk: `<path d="M${cx - 14} ${my + 1} C${cx - 3} ${my + 4} ${cx + 9} ${my + 2} ${cx + 17} ${my - 6}" fill="none" stroke="${C.lips}" stroke-width="4" stroke-linecap="round"/>`,
+    o: `<ellipse cx="${cx}" cy="${my + 2}" rx="8" ry="10" fill="${C.mouth}" stroke="${C.lips}" stroke-width="3.5"/>`,
+    open: `<path d="M${cx - 22} ${my - 6} C${cx - 16} ${my + 20} ${cx + 16} ${my + 20} ${cx + 22} ${my - 6}Z" fill="${C.mouth}" stroke="${C.lips}" stroke-width="3.5" stroke-linejoin="round"/><path d="M${cx - 10} ${my + 9} C${cx - 4} ${my + 3} ${cx + 4} ${my + 3} ${cx + 10} ${my + 9} C${cx + 6} ${my + 13} ${cx - 6} ${my + 13} ${cx - 10} ${my + 9}Z" fill="${C.tongue}"/><path d="M${cx - 20} ${my - 5} L${cx + 20} ${my - 5} L${cx + 17} ${my + 1} L${cx - 17} ${my + 1}Z" fill="#fff"/>`,
+  }[e.mouth];
+  return o + m;
+}
+
+function body() {
+  const s = `stroke="${C.line}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"`;
+  let o = '';
+  // shoes with a small heel
+  o += `<path d="M104 598 C100 586 112 580 130 582 L144 584 C148 594 144 604 134 605 L108 606 C104 605 103 602 104 598Z" fill="${C.shoes}" ${s}/><path d="M136 590 L140 606" stroke="${C.shoeShade}" stroke-width="5" stroke-linecap="round"/>`;
+  o += `<path d="M196 598 C200 586 188 580 170 582 L156 584 C152 594 156 604 166 605 L192 606 C196 605 197 602 196 598Z" fill="${C.shoes}" ${s}/><path d="M164 590 L160 606" stroke="${C.shoeShade}" stroke-width="5" stroke-linecap="round"/>`;
+  // legs
+  o += `<path d="M118 460 L142 460 L140 586 L122 586Z" fill="${C.skin}" ${s}/><path d="M158 460 L182 460 L178 586 L160 586Z" fill="${C.skin}" ${s}/>`;
+  // neck
+  o += `<path d="M136 176 L136 204 L164 204 L164 176Z" fill="${C.skinShade}" ${s}/>`;
+  // arms (skin) and hands
+  o += `<path d="M82 226 C66 262 62 304 68 346 C70 360 78 366 88 364 C96 362 98 354 96 344 C92 306 96 274 106 248Z" fill="${C.skin}" ${s}/>`;
+  o += `<path d="M218 226 C234 262 238 304 232 346 C230 360 222 366 212 364 C204 362 202 354 204 344 C208 306 204 274 194 248Z" fill="${C.skin}" ${s}/>`;
+  o += `<path d="M70 358 C64 372 68 390 80 394 C92 397 100 388 98 374 L96 360Z" fill="${C.skin}" ${s}/><path d="M230 358 C236 372 232 390 220 394 C208 397 200 388 202 374 L204 360Z" fill="${C.skin}" ${s}/>`;
+  // dress: fitted bodice, belt at the waist, skirt flaring to the knee
+  o += `<path d="M150 198 C122 198 96 206 84 224 C86 252 100 276 112 300 L188 300 C200 276 214 252 216 224 C204 206 178 198 150 198Z" fill="${C.dress}" ${s}/>`;
+  o += `<path d="M112 306 C94 360 74 420 66 470 C110 484 190 484 234 470 C226 420 206 360 188 306Z" fill="${C.dress}" ${s}/>`;
+  for (const x of [118, 150, 182]) o += `<path d="M${x} 316 C${x + (x - 150) * .3} 380 ${x + (x - 150) * .6} 430 ${x + (x - 150) * .9} 470" fill="none" stroke="${C.dressShade}" stroke-width="2.5" stroke-linecap="round"/>`;
+  o += `<path d="M110 296 L190 296 L192 310 L108 310Z" fill="${C.belt}" ${s}/>`;
+  // cap sleeves and a soft V neckline
+  o += `<path d="M84 224 C78 238 76 250 80 262 C92 258 102 250 108 240 C104 230 96 224 84 224Z" fill="${C.dressShade}" ${s}/>`;
+  o += `<path d="M216 224 C222 238 224 250 220 262 C208 258 198 250 192 240 C196 230 204 224 216 224Z" fill="${C.dressShade}" ${s}/>`;
+  o += `<path d="M128 200 L150 232 L172 200" fill="${C.skin}" ${s}/>`;
+  return `<g class="short" transform="translate(150 196) scale(1.04 0.58) translate(-150 -196)">${o}</g>`;
+}
+
+const svg = (vb, inner, label) => `<svg viewBox="${vb}" role="img" aria-label="${label}" xmlns="http://www.w3.org/2000/svg">${inner}</svg>`;
+const full = (e) => `${hairBack()}${body()}${head(e)}`;
+document.getElementById('front').innerHTML = svg('10 14 280 432', `<ellipse cx="150" cy="437" rx="80" ry="8" fill="#000" opacity=".12"/>${full(EXPR.smile)}`, 'Tori Sterling cartoon, front view');
+
+const names = { smile: ['Warm smile', 'default'], delighted: ['Delighted', 'the drone lands at her feet'], sceptical: ['Still dreaming?', 'the napkin sketch'], tender: ['Tender', '“Again. Tomorrow.”'] };
+document.getElementById('expr').innerHTML = Object.entries(names).map(([k, [t, sub]]) =>
+  `<figure>${svg('62 20 176 190', hairBack() + head(EXPR[k]), `Tori ${t}`)}<figcaption>${t}<span>${sub}</span></figcaption></figure>`).join('');
+
+const sw = [['Skin', C.skin], ['Hair', C.hair], ['Dress', C.dress], ['Belt', C.belt], ['Shoes', C.shoes], ['Eyes', C.iris], ['Lips', C.lips], ['Outline', C.line]];
+document.getElementById('swatches').innerHTML = sw.map(([n, h]) => `<div class="sw"><i style="background:${h}"></i><div>${n}<br><code>${h}</code></div></div>`).join('');
+
+(function () {
+  let o = '';
+  const H = 188, base = 230, top = 26, feet = 442, unit = H * 160 / (feet - top);
+  for (let i = 0; i * unit <= H + 1; i++) { const y = base - i * unit; o += `<line x1="10" x2="390" y1="${y}" y2="${y}" stroke="currentColor" stroke-opacity=".15"/><text x="8" y="${y - 3}" font-size="10" fill="currentColor" fill-opacity=".7">${i}</text>`; }
+  const k = H / (feet - top);
+  o += `<g transform="translate(${150 - 150 * k} ${base - H - top * k}) scale(${k})">${full(EXPR.smile)}</g>`;
+  const hh = 200 / 8, HT = 188 * 1.0; o += `<g fill="currentColor" fill-opacity=".22"><circle cx="285" cy="${base - HT + hh / 2}" r="${hh / 2}"/><path d="M265 ${base - HT + hh} h40 l14 ${HT * .5} h-68z"/><rect x="271" y="${base - HT + hh + HT * .5}" width="12" height="${HT * .37}" rx="5"/><rect x="287" y="${base - HT + hh + HT * .5}" width="12" height="${HT * .37}" rx="5"/></g>`;
+  o += `<text x="150" y="${base + 18}" font-size="12" text-anchor="middle" fill="currentColor">Cartoon: about 2½ heads</text><text x="285" y="${base + 18}" font-size="12" text-anchor="middle" fill="currentColor">Realistic: 7½ heads</text>`;
+  document.getElementById('heights').innerHTML = `<svg viewBox="0 0 400 260" role="img" aria-label="Height comparison in head units" style="color:var(--ink)">${o}</svg>`;
+})();
+
+// show the turnaround once it exists
+const ti = document.getElementById('turnImg');
+ti.addEventListener('load', () => { document.getElementById('turnPanel').hidden = false; });
+if (ti.complete && ti.naturalWidth) document.getElementById('turnPanel').hidden = false;
+</script>

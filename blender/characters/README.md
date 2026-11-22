@@ -135,3 +135,27 @@ Face sliders are custom properties on `AC.rig` (keyframe them like any value):
 The drivers use no Python expressions (only `max`/`min` for blink, otherwise a plain slider input mapped through an F-curve), so they work even with "Auto Run Python Scripts" off. Don't hide `AC.rig` from renders: that also stops the face bones from updating in the render.
 
 Test action `AC_wave_talk` (96 frames): right-arm wave with elbow and wrist, head tilt, brows up, two blinks, talking mouth.
+
+### Cartoon Tori (`tori_cartoon_v001.blend`) — matches cartoon Ace
+
+Built from `characters/2d/tori_cartoon.html` (2D model sheet: front view, four expressions, palette, proportions, turnaround) and from a copy of `ace_cartoon_v001.blend`, so she has the **same rig and the same face sliders** (`mouth` 0–8, `blink`, `blink_L/R`, `look_x/y`, `brows`, `brow_tilt` on `TC.rig`). About 2½ heads tall and 5 % shorter than cartoon Ace (rig scaled 0.95).
+
+Her look: rounder jaw, long chestnut hair (one shell behind the head with a wavy hem at the shoulders) plus the side-swept fringe, three lash flicks per eye (on the eye bones, so they close with blinks), blush, lip-coloured mouth lines, bare slim arms with mitt hands, terracotta dress (#c96f53) with puff sleeves, V neckline and a navy belt (#3d4a63), legs and nude low heels (#d8bf94). Test action `TC_wave_talk` (left-hand wave, talk, blinks). Turnaround: `characters/2d/tori_cartoon_turnaround.png`.
+
+Known rough spots: the nose sticks out a little in profile, and her hair is one smooth shape (no individual waves yet).
+
+### Eyes seated (`ace_cartoon_v003.blend`, `tori_cartoon_v003.blend`) — use these
+
+v002 with the eyes, irises, pupils, highlights, brows and lashes pulled back onto the face (`tools/blender/fix_eyes.py`), so they no longer stick out in profile. Everything else is the same as v002. Baby Max is now `max_cartoon_v002.blend` (see below; built from Ace v003 by `build_max.py`, which also runs the eye fix).
+
+### Fingers (`ace_cartoon_v002.blend`, `tori_cartoon_v002.blend`)
+
+v001 plus real hands: a rounded palm (`*.hand.L/R`), four fingers (`*.finger_index/middle/ring/pinky.L/R`) and a rebuilt thumb, all bone-parented. Each finger has its own bone under `hand.*` (Euler XYZ): **curl = negative X** (about −0.4 relaxed, −1.4 fist), spread = Z. Built by `tools/blender/add_fingers.py` (re-runnable; `HAND_SCALE`, `FINGER_LEN`, `FINGER_FAT`, `PALM_START` overrides).
+
+### Baby Max (`max_cartoon_v001.blend`) — Episode 1 age
+
+Ace and Tori's son, about 1 year old, built from cartoon Ace by `tools/blender/build_max.py` (`blender -b blender/characters/ace_cartoon_v002.blend --python tools/blender/build_max.py -- <out.blend> [preview_dir]`). Same rig and face sliders (`MX.rig`, object scale 0.72, about 0.62 m tall); Ace's head and face parts moved down onto a baby body, nose 72 %, thinner brows, default `brows` 0.35 / `brow_tilt` 0.3 for a softer look.
+
+Look (blueprint palette): skin #dba67c, light-blue babygrow #a7c7e7 with footies and white soles, white round collar, chubby sleeve "sausages" on the arm bones, short chubby fingers, messy dark hair #3b2416 (cap plus nine flicks), blush, small navy aeroplane patch on the chest (no logo). Everything is in the `MaxCartoon` collection for linking; `MX_wave_talk` is kept as a test action.
+
+To grow him for later episodes, change `RIG_SCALE`, `DZ` and the bone positions in the script and save the next version.
