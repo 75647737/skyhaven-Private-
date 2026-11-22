@@ -112,3 +112,8 @@ ls._mpfb_data = r + r"\data"; ls._mpfb_root = r
 
 - **2D:** `characters/2d/ace_cartoon.html` (renders to `ace_cartoon_sheet.png`): original cartoon model sheet — front view, four expressions (easy smile, still planning, surprised, tired), palette from the blueprint, 5-heads-tall proportions vs the realistic 8.
 - **3D toon:** `ace_toon_v001.blend` — a copy of `ace_v007.blend` with flat 3-tone cel materials (emission through Shader to RGB + constant ramp), an inverted-hull outline (Solidify, flipped normals, `TOON_outline` material) and bigger eyes. Rig, idle and face controls are unchanged. Proportions are still realistic: scaling the head by pose bones or a shape key tore the Rigify face, so a true big-head 3D cartoon Ace needs a new head mesh built from the 2D sheet.
+
+### Cartoon Ace, short version (`ace_cartoon_v001.blend`) — the chosen cartoon style
+
+Short and chunky, about 2½ heads tall (1.04 m), built in Blender straight from the 2D sheet's measurements (1 sheet unit = 2.5 mm). Simple rounded shapes: big head with large eyes (white, iris, pupil, highlight), curve brows and smile, hair cap with a front hairline, sweater with collar, hem and cable lines, mitt hands, short legs, rounded shoes. Flat 3-tone cel materials (`AC_*`) and an inverted-hull outline (`AC_outline`).
+Rig `AC.rig`: root, hips, chest, head, arm/hand and leg/foot per side; every part is bone-parented (rigid), so posing is quick. Known rough spots: the arms read as blocks, and the hand can separate slightly from the sleeve in big arm poses.

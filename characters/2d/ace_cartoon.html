@@ -40,6 +40,7 @@ h2 { font-family: var(--display); font-weight: 500; font-size: 1.15rem; margin: 
 @media (max-width: 820px) { .notes { grid-template-columns: minmax(0, 1fr); } }
 .notes p { margin: 6px 0 0; color: var(--muted); font-size: .92rem; }
 .heights svg { width: 100%; height: auto; display: block; }
+.short * { vector-effect: non-scaling-stroke; }
 @media (prefers-reduced-motion: no-preference) { .blink { animation: blink 4.5s infinite; transform-origin: center; transform-box: fill-box; } }
 @keyframes blink { 0%, 94%, 100% { transform: scaleY(1); } 96% { transform: scaleY(.1); } }
 </style>
@@ -49,7 +50,7 @@ h2 { font-family: var(--display); font-weight: 500; font-size: 1.15rem; margin: 
     <h1>Ace Sterling · cartoon</h1>
     <span class="sheetid">Skyhaven model sheet · AS-2D-01 · “before” years</span>
   </header>
-  <p class="lede">Ace is about 30, a dad, a dreamer who builds things. The cartoon keeps his blueprint colours and features: warm brown skin, a short dark side part, big friendly eyes, a broad build, the blue-grey sweater, khaki trousers and brown shoes. The head is drawn bigger and the hands are simplified so his face reads on a phone screen.</p>
+  <p class="lede">Ace is about 30, a dad, a dreamer who builds things. The cartoon keeps his blueprint colours and features: warm brown skin, a short dark side part, big friendly eyes, a broad build, the blue-grey sweater, khaki trousers and brown shoes. He is drawn short and chunky, about 2½ heads tall, with a big head so his face reads on a phone screen.</p>
 
   <div class="grid">
     <section class="panel hero" aria-label="Front view">
@@ -74,8 +75,8 @@ h2 { font-family: var(--display); font-weight: 500; font-size: 1.15rem; margin: 
 
   <section class="notes">
     <div class="panel"><div class="label">Line</div><p>One outline weight (3 px at sheet scale), round joins, darker than any fill. No inner lines on the face except brows, nose tip and mouth, so lip-sync swaps stay clean.</p></div>
-    <div class="panel"><div class="label">Head</div><p>Head is one fifth of his height (realistic Ace is one eighth). Eyes sit on the head’s middle line, 1 eye apart; pupils always keep a white highlight at 10 o’clock.</p></div>
-    <div class="panel"><div class="label">Same Ace in 3D</div><p>The 3D toon version reuses the rigged Blender Ace with flat cel shading and an outline, so the 2D and 3D cartoons share one silhouette and palette.</p></div>
+    <div class="panel"><div class="label">Head</div><p>Short and chunky: about 2½ heads tall, so the head is almost 40 % of his height (realistic Ace is one eighth). Legs are short, hands are simple mitts. Eyes sit on the head’s middle line, 1 eye apart; pupils always keep a white highlight at 10 o’clock.</p></div>
+    <div class="panel"><div class="label">Same Ace in 3D</div><p>The 3D cartoon Ace (<code>ace_cartoon_v001.blend</code>) is built from this sheet’s measurements, 1.04 m tall, with flat cel shading, the same outline and a simple rig, so the 2D and 3D cartoons share one silhouette and palette.</p></div>
   </section>
 </div>
 
@@ -157,11 +158,12 @@ function body() {
   for (const x of [128, 172]) o += `<path d="M${x} 222 q6 12 0 24 q-6 12 0 24 q6 12 0 24 q-6 12 0 24 q6 12 0 24 q-6 12 0 22" fill="none" stroke="${C.knit}" stroke-width="2.5" stroke-linecap="round"/>`;
   // crew collar
   o += `<path d="M124 198 C132 214 168 214 176 198" fill="none" stroke="${C.sweaterShade}" stroke-width="7" stroke-linecap="round"/>`;
-  return o;
+  // short, chunky cartoon body: squash everything below the neck to 58 % height and widen it a little
+  return `<g class="short" transform="translate(150 196) scale(1.12 0.58) translate(-150 -196)">${o}</g>`;
 }
 
 const svg = (vb, inner, label) => `<svg viewBox="${vb}" role="img" aria-label="${label}" xmlns="http://www.w3.org/2000/svg">${inner}</svg>`;
-document.getElementById('front').innerHTML = svg('20 10 260 610', `<ellipse cx="150" cy="606" rx="80" ry="8" fill="#000" opacity=".12"/>${body()}${head(EXPR.smile)}`, 'Ace Sterling cartoon, front view');
+document.getElementById('front').innerHTML = svg('10 14 280 432', `<ellipse cx="150" cy="437" rx="88" ry="8" fill="#000" opacity=".12"/>${body()}${head(EXPR.smile)}`, 'Ace Sterling cartoon, front view');
 
 const names = { smile: ['Easy smile', 'default'], planning: ['Still planning', 'the napkin sketch'], surprised: ['Surprised', 'the drone lifts off'], tired: ['Tired', 'late night, garage'] };
 document.getElementById('expr').innerHTML = Object.entries(names).map(([k, [t, sub]]) =>
@@ -174,12 +176,13 @@ document.getElementById('swatches').innerHTML = sw.map(([n, h]) => `<div class="
 (function () {
   const ink = getComputedStyle(document.documentElement).getPropertyValue('--muted').trim() || '#666';
   let o = '';
-  const H = 200, base = 230;
-  for (let i = 0; i <= 5; i++) { const y = base - i * H / 5; o += `<line x1="10" x2="390" y1="${y}" y2="${y}" stroke="currentColor" stroke-opacity=".15"/><text x="8" y="${y - 3}" font-size="10" fill="currentColor" fill-opacity=".7">${i}</text>`; }
-  o += `<g transform="translate(110 ${base - H}) scale(${H / 600})">${body()}${head(EXPR.smile)}</g>`;
+  const H = 200, base = 230, top = 28, feet = 442, unit = H * 160 / (feet - top);   // one head = 160 sheet units
+  for (let i = 0; i * unit <= H + 1; i++) { const y = base - i * unit; o += `<line x1="10" x2="390" y1="${y}" y2="${y}" stroke="currentColor" stroke-opacity=".15"/><text x="8" y="${y - 3}" font-size="10" fill="currentColor" fill-opacity=".7">${i}</text>`; }
+  const k = H / (feet - top);
+  o += `<g transform="translate(${150 - 150 * k} ${base - H - top * k}) scale(${k})">${body()}${head(EXPR.smile)}</g>`;
   // realistic Ace silhouette: 8 heads at the same height
   const hh = H / 8; o += `<g fill="currentColor" fill-opacity=".22"><circle cx="285" cy="${base - H + hh / 2}" r="${hh / 2}"/><rect x="262" y="${base - H + hh}" width="46" height="${H * .42}" rx="10"/><rect x="266" y="${base - H + hh + H * .42}" width="17" height="${H * .45}" rx="6"/><rect x="287" y="${base - H + hh + H * .42}" width="17" height="${H * .45}" rx="6"/></g>`;
-  o += `<text x="150" y="${base + 18}" font-size="12" text-anchor="middle" fill="currentColor">Cartoon: 5 heads tall</text><text x="285" y="${base + 18}" font-size="12" text-anchor="middle" fill="currentColor">Realistic: 8 heads</text>`;
+  o += `<text x="150" y="${base + 18}" font-size="12" text-anchor="middle" fill="currentColor">Cartoon: about 2½ heads</text><text x="285" y="${base + 18}" font-size="12" text-anchor="middle" fill="currentColor">Realistic: 8 heads</text>`;
   document.getElementById('heights').innerHTML = `<svg viewBox="0 0 400 260" role="img" aria-label="Height comparison in head units" style="color:var(--ink)">${o}</svg>`;
 })();
 </script>
