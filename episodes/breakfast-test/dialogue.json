@@ -1,0 +1,19 @@
+{
+  "title": "Breakfast test (Episode 1, scene 2 sketch)",
+  "voices": {
+    "Ace":  {"voice": "Will",  "voice_id": "bIHbv24MWmeRgasZH58o", "stability": 0.45, "style": 0.30},
+    "Tori": {"voice": "Sarah", "voice_id": "EXAVITQu4vr4xnSDxMaL", "stability": 0.50, "style": 0.30},
+    "Max":  {"voice": "Piku",  "voice_id": "EeQEodFZVtBkjtgK3HBc", "stability": 0.30, "style": 0.60}
+  },
+  "lines": [
+    {"id": "L01", "who": "Tori", "text": "One egg, two plates... We'll make it work. Won't we, Max?", "mood": "warm"},
+    {"id": "L02", "who": "Max",  "text": "Ba-ba! Hehehe!", "mood": "giggle"},
+    {"id": "L03", "who": "Tori", "text": "Ace! Breakfast is ready!", "mood": "calling"},
+    {"id": "L04", "who": "Ace",  "text": "Coming, love! Just... one more line.", "mood": "focused"},
+    {"id": "L05", "who": "Ace",  "text": "Good morning, my little pilot!", "mood": "happy"},
+    {"id": "L06", "who": "Max",  "text": "Da-da! Hehe!", "mood": "giggle"},
+    {"id": "L07", "who": "Tori", "text": "Still dreaming?", "mood": "teasing"},
+    {"id": "L08", "who": "Ace",  "text": "Still planning.", "mood": "confident"},
+    {"id": "L09", "who": "Tori", "text": "Eat, before it gets cold.", "mood": "loving"}
+  ]
+}

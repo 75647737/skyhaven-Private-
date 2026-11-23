@@ -1,0 +1,196 @@
+<title>Ace Cartoon Model Sheet</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Inter:wght@400;500;600&display=swap">
+<style>
+/* Layout: a studio model sheet. Big front view on the left, expressions and palette on the right, production notes below. */
+:root {
+  --paper: #f3f6fa; --card: #ffffff; --ink: #1d2433; --muted: #5d6779; --line: #d7dee8;
+  --sky: #dce8f4; --navy: #2c3e5c; --terracotta: #b8553f;
+  --display: "Fredoka", "Trebuchet MS", system-ui, sans-serif; --body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --paper: #121822; --card: #1a2230; --ink: #e8edf5; --muted: #9aa6b8; --line: #2a3548; --sky: #1e2b3d; --navy: #9db4d8; --terracotta: #e08a72; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --paper: #121822; --card: #1a2230; --ink: #e8edf5; --muted: #9aa6b8; --line: #2a3548; --sky: #1e2b3d; --navy: #9db4d8; --terracotta: #e08a72; color-scheme: dark }
+body { background: var(--paper); color: var(--ink); font-family: var(--body); line-height: 1.55; }
+.wrap { max-width: 1100px; margin: 0 auto; padding-block: 28px 56px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 28px; }
+header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; border-bottom: 2px solid var(--line); padding-bottom: 14px; }
+h1 { font-family: var(--display); font-weight: 600; font-size: clamp(1.8rem, 4vw, 2.6rem); margin: 0; letter-spacing: .01em; text-wrap: balance; }
+.sheetid { font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); font-variant-numeric: tabular-nums; }
+.lede { margin: 0; color: var(--muted); max-width: 62ch; }
+.grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 24px; align-items: start; }
+@media (max-width: 820px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+.panel { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px; min-width: 0; }
+.hero { background: linear-gradient(var(--sky), var(--card) 78%); }
+.hero svg { display: block; width: 100%; max-width: 360px; height: auto; margin: 0 auto; }
+h2 { font-family: var(--display); font-weight: 500; font-size: 1.15rem; margin: 0 0 12px; }
+.label { font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.expr { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 520px) { .expr { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.expr figure { margin: 0; display: grid; gap: 6px; justify-items: center; text-align: center; }
+.expr svg { width: 100%; max-width: 150px; height: auto; background: var(--sky); border-radius: 12px; }
+.expr figcaption { font-size: .85rem; }
+.expr figcaption span { display: block; color: var(--muted); font-size: .76rem; }
+.right { display: grid; gap: 24px; min-width: 0; }
+.swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 10px; }
+.sw { display: grid; grid-template-columns: 34px 1fr; gap: 8px; align-items: center; font-size: .82rem; }
+.sw i { width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--line); display: block; }
+.sw code { color: var(--muted); font-size: .75rem; }
+.notes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 820px) { .notes { grid-template-columns: minmax(0, 1fr); } }
+.notes p { margin: 6px 0 0; color: var(--muted); font-size: .92rem; }
+.heights svg { width: 100%; height: auto; display: block; }
+.short * { vector-effect: non-scaling-stroke; }
+.turn { overflow-x: auto; margin-top: 10px; border-radius: 10px; }
+.turn img { display: block; width: 100%; min-width: 560px; height: auto; }
+@media (prefers-reduced-motion: no-preference) { .blink { animation: blink 4.5s infinite; transform-origin: center; transform-box: fill-box; } }
+@keyframes blink { 0%, 94%, 100% { transform: scaleY(1); } 96% { transform: scaleY(.1); } }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Ace Sterling · cartoon</h1>
+    <span class="sheetid">Skyhaven model sheet · AS-2D-01 · “before” years</span>
+  </header>
+  <p class="lede">Ace is about 30, a dad, a dreamer who builds things. The cartoon keeps his blueprint colours and features: warm brown skin, a short dark side part, big friendly eyes, a broad build, the blue-grey sweater, khaki trousers and brown shoes. He is drawn short and chunky, about 2½ heads tall, with a big head so his face reads on a phone screen.</p>
+
+  <div class="grid">
+    <section class="panel hero" aria-label="Front view">
+      <div class="label">Front view · neutral smile</div>
+      <div id="front"></div>
+    </section>
+    <div class="right">
+      <section class="panel" aria-label="Expressions">
+        <h2>Expressions</h2>
+        <div class="expr" id="expr"></div>
+      </section>
+      <section class="panel" aria-label="Palette">
+        <h2>Palette</h2>
+        <div class="swatches" id="swatches"></div>
+      </section>
+      <section class="panel heights" aria-label="Proportions">
+        <h2>Proportions</h2>
+        <div id="heights"></div>
+      </section>
+    </div>
+  </div>
+
+  <section class="panel" aria-label="Turnaround">
+    <h2>Turnaround</h2>
+    <div class="label">Front · three-quarter · side · back, rendered flat from the 3D cartoon model</div>
+    <div class="turn"><img src="ace_cartoon_turnaround.png" alt="Cartoon Ace from the front, three-quarter, side and back" width="2500" height="940"></div>
+  </section>
+
+  <section class="notes">
+    <div class="panel"><div class="label">Line</div><p>One outline weight (3 px at sheet scale), round joins, darker than any fill. No inner lines on the face except brows, nose tip and mouth, so lip-sync swaps stay clean.</p></div>
+    <div class="panel"><div class="label">Head</div><p>Short and chunky: about 2½ heads tall, so the head is almost 40 % of his height (realistic Ace is one eighth). Legs are short, hands are simple mitts. Eyes sit on the head’s middle line, 1 eye apart; pupils always keep a white highlight at 10 o’clock.</p></div>
+    <div class="panel"><div class="label">Same Ace in 3D</div><p>The 3D cartoon Ace (<code>ace_cartoon_v001.blend</code>) is built from this sheet’s measurements, 1.04 m tall, with flat cel shading, the same outline and a simple rig, so the 2D and 3D cartoons share one silhouette and palette.</p></div>
+  </section>
+</div>
+
+<script>
+const C = { skin: '#c68a5e', skinShade: '#a8704a', hair: '#2a1a12', sweater: '#5b7a99', sweaterShade: '#4b6785', knit: '#6f8eae',
+  trousers: '#8f7f62', trousersShade: '#7a6c52', shoes: '#3a2418', eyeWhite: '#fbfaf7', iris: '#4a2c18', line: '#1f1a17', mouth: '#7a2e28', tongue: '#d9706a' };
+
+// Expressions only change brows, eyes and mouth; everything else is fixed.
+const EXPR = {
+  smile:      { brow: [-2, 2],  lids: 0,   mouth: 'smile',   look: [0, 0] },
+  planning:   { brow: [3, -5],  lids: .25, mouth: 'smirk',   look: [3, -1] },
+  surprised:  { brow: [-9, -9], lids: 0,   mouth: 'o',       look: [0, 0] },
+  tired:      { brow: [4, 4],   lids: .55, mouth: 'flat',    look: [0, 3] },
+  laugh:      { brow: [-5, -5], lids: .6,  mouth: 'open',    look: [0, 0] },
+};
+
+function head(e, cx = 150, cy = 112) {
+  const s = `stroke="${C.line}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"`;
+  const ex = 25, ey = cy + 6;
+  let o = '';
+  // ears
+  o += `<ellipse cx="${cx - 63}" cy="${cy + 12}" rx="11" ry="16" fill="${C.skin}" ${s}/><ellipse cx="${cx + 63}" cy="${cy + 12}" rx="11" ry="16" fill="${C.skin}" ${s}/>`;
+  o += `<path d="M${cx - 66} ${cy + 6} q5 6 0 12" fill="none" stroke="${C.skinShade}" stroke-width="2.5" stroke-linecap="round"/><path d="M${cx + 66} ${cy + 6} q-5 6 0 12" fill="none" stroke="${C.skinShade}" stroke-width="2.5" stroke-linecap="round"/>`;
+  // face: broad, soft square jaw
+  o += `<path d="M${cx - 60} ${cy - 18} C${cx - 62} ${cy + 40} ${cx - 44} ${cy + 74} ${cx} ${cy + 76} C${cx + 44} ${cy + 74} ${cx + 62} ${cy + 40} ${cx + 60} ${cy - 18} C${cx + 58} ${cy - 66} ${cx - 58} ${cy - 66} ${cx - 60} ${cy - 18}Z" fill="${C.skin}" ${s}/>`;
+  // hair: short, side part on his right (viewer's left), sweep to the other side
+  o += `<path d="M${cx - 62} ${cy - 6} C${cx - 72} ${cy - 50} ${cx - 50} ${cy - 82} ${cx - 6} ${cy - 84} C${cx + 40} ${cy - 86} ${cx + 70} ${cy - 62} ${cx + 63} ${cy - 10} C${cx + 58} ${cy - 30} ${cx + 52} ${cy - 40} ${cx + 38} ${cy - 46} C${cx + 10} ${cy - 40} ${cx - 18} ${cy - 46} ${cx - 34} ${cy - 56} C${cx - 44} ${cy - 44} ${cx - 54} ${cy - 30} ${cx - 62} ${cy - 6}Z" fill="${C.hair}" ${s}/>`;
+  o += `<path d="M${cx - 34} ${cy - 56} C${cx - 30} ${cy - 70} ${cx - 22} ${cy - 78} ${cx - 10} ${cy - 82}" fill="none" stroke="#4a3020" stroke-width="2.5" stroke-linecap="round"/>`;
+  // eyes
+  for (const side of [-1, 1]) {
+    const x = cx + side * ex;
+    o += `<g class="blink"><ellipse cx="${x}" cy="${ey}" rx="15" ry="18" fill="${C.eyeWhite}" ${s}/>`;
+    o += `<circle cx="${x + e.look[0]}" cy="${ey + 2 + e.look[1]}" r="10" fill="${C.iris}"/><circle cx="${x + e.look[0]}" cy="${ey + 2 + e.look[1]}" r="5" fill="#120a06"/>`;
+    o += `<circle cx="${x + e.look[0] - 4}" cy="${ey - 2 + e.look[1]}" r="3.2" fill="#fff"/></g>`;
+    if (e.lids > 0) {
+      const ly = ey - 18 + 36 * e.lids;
+      o += `<path d="M${x - 16} ${ey - 2} C${x - 16} ${ey - 24} ${x + 16} ${ey - 24} ${x + 16} ${ey - 2} L${x + 16} ${ly} C${x + 6} ${ly + 3} ${x - 6} ${ly + 3} ${x - 16} ${ly}Z" fill="${C.skin}" ${s}/>`;
+    }
+    // brows: thick, slightly arched
+    const [inner, outer] = e.brow;
+    o += `<path d="M${x - side * 14} ${ey - 26 + inner} Q${x} ${ey - 33 + (inner + outer) / 2} ${x + side * 16} ${ey - 25 + outer}" fill="none" stroke="${C.hair}" stroke-width="6" stroke-linecap="round"/>`;
+  }
+  // nose: soft rounded tip
+  o += `<path d="M${cx - 7} ${cy + 34} C${cx - 9} ${cy + 41} ${cx + 9} ${cy + 41} ${cx + 7} ${cy + 34}" fill="none" stroke="${C.skinShade}" stroke-width="3" stroke-linecap="round"/>`;
+  // mouth
+  const my = cy + 52;
+  const m = {
+    smile: `<path d="M${cx - 20} ${my - 4} C${cx - 10} ${my + 10} ${cx + 10} ${my + 10} ${cx + 20} ${my - 4}" fill="none" ${s}/>`,
+    smirk: `<path d="M${cx - 16} ${my} C${cx - 4} ${my + 4} ${cx + 10} ${my + 2} ${cx + 20} ${my - 7}" fill="none" ${s}/>`,
+    o: `<ellipse cx="${cx}" cy="${my + 2}" rx="9" ry="11" fill="${C.mouth}" ${s}/>`,
+    flat: `<path d="M${cx - 14} ${my + 2} C${cx - 4} ${my} ${cx + 4} ${my} ${cx + 14} ${my + 3}" fill="none" ${s}/>`,
+    open: `<path d="M${cx - 24} ${my - 6} C${cx - 18} ${my + 22} ${cx + 18} ${my + 22} ${cx + 24} ${my - 6}Z" fill="${C.mouth}" ${s}/><path d="M${cx - 10} ${my + 10} C${cx - 4} ${my + 4} ${cx + 4} ${my + 4} ${cx + 10} ${my + 10} C${cx + 6} ${my + 14} ${cx - 6} ${my + 14} ${cx - 10} ${my + 10}Z" fill="${C.tongue}"/><path d="M${cx - 22} ${my - 5} L${cx + 22} ${my - 5} L${cx + 19} ${my + 1} L${cx - 19} ${my + 1}Z" fill="#fff"/>`,
+  }[e.mouth];
+  return o + m;
+}
+
+function body() {
+  const s = `stroke="${C.line}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"`;
+  let o = '';
+  // shoes
+  o += `<path d="M96 600 C92 584 104 576 126 578 L146 580 C150 592 146 602 136 604 L102 606 C98 605 96 603 96 600Z" fill="${C.shoes}" ${s}/>`;
+  o += `<path d="M204 600 C208 584 196 576 174 578 L154 580 C150 592 154 602 164 604 L198 606 C202 605 204 603 204 600Z" fill="${C.shoes}" ${s}/>`;
+  // trousers
+  o += `<path d="M92 372 L208 372 L204 470 C202 520 196 556 190 582 L156 582 L152 446 L148 446 L144 582 L110 582 C104 556 98 520 96 470Z" fill="${C.trousers}" ${s}/>`;
+  o += `<path d="M150 384 L150 444" stroke="${C.trousersShade}" stroke-width="3" stroke-linecap="round"/>`;
+  // neck
+  o += `<path d="M132 176 L132 204 L168 204 L168 176Z" fill="${C.skinShade}" ${s}/>`;
+  // arms (sleeves) behind the torso, hanging relaxed with a soft bend
+  o += `<path d="M70 222 C52 258 48 300 54 344 C56 360 64 368 76 366 C84 364 88 356 86 344 C82 306 86 272 98 244Z" fill="${C.sweaterShade}" ${s}/>`;
+  o += `<path d="M230 222 C248 258 252 300 246 344 C244 360 236 368 224 366 C216 364 212 356 214 344 C218 306 214 272 202 244Z" fill="${C.sweaterShade}" ${s}/>`;
+  // hands
+  o += `<path d="M58 360 C52 374 56 392 68 396 C80 399 88 390 86 376 L84 362Z" fill="${C.skin}" ${s}/>`;
+  o += `<path d="M242 360 C248 374 244 392 232 396 C220 399 212 390 214 376 L216 362Z" fill="${C.skin}" ${s}/>`;
+  // sweater torso: broad shoulders, slight taper, ribbed hem
+  o += `<path d="M150 196 C116 196 86 204 70 222 C64 260 76 330 86 382 L214 382 C224 330 236 260 230 222 C214 204 184 196 150 196Z" fill="${C.sweater}" ${s}/>`;
+  for (let x = 98; x <= 202; x += 13) o += `<path d="M${x} 370 L${x} 382" stroke="${C.sweaterShade}" stroke-width="2.5" stroke-linecap="round"/>`;
+  o += `<path d="M88 368 L212 368" stroke="${C.sweaterShade}" stroke-width="2.5"/>`;
+  // cable-knit hint down the front
+  for (const x of [128, 172]) o += `<path d="M${x} 222 q6 12 0 24 q-6 12 0 24 q6 12 0 24 q-6 12 0 24 q6 12 0 24 q-6 12 0 22" fill="none" stroke="${C.knit}" stroke-width="2.5" stroke-linecap="round"/>`;
+  // crew collar
+  o += `<path d="M124 198 C132 214 168 214 176 198" fill="none" stroke="${C.sweaterShade}" stroke-width="7" stroke-linecap="round"/>`;
+  // short, chunky cartoon body: squash everything below the neck to 58 % height and widen it a little
+  return `<g class="short" transform="translate(150 196) scale(1.12 0.58) translate(-150 -196)">${o}</g>`;
+}
+
+const svg = (vb, inner, label) => `<svg viewBox="${vb}" role="img" aria-label="${label}" xmlns="http://www.w3.org/2000/svg">${inner}</svg>`;
+document.getElementById('front').innerHTML = svg('10 14 280 432', `<ellipse cx="150" cy="437" rx="88" ry="8" fill="#000" opacity=".12"/>${body()}${head(EXPR.smile)}`, 'Ace Sterling cartoon, front view');
+
+const names = { smile: ['Easy smile', 'default'], planning: ['Still planning', 'the napkin sketch'], surprised: ['Surprised', 'the drone lifts off'], tired: ['Tired', 'late night, garage'] };
+document.getElementById('expr').innerHTML = Object.entries(names).map(([k, [t, sub]]) =>
+  `<figure>${svg('70 20 160 180', head(EXPR[k]), `Ace ${t}`)}<figcaption>${t}<span>${sub}</span></figcaption></figure>`).join('');
+
+const sw = [['Skin', C.skin], ['Hair', C.hair], ['Sweater', C.sweater], ['Trousers', C.trousers], ['Shoes', C.shoes], ['Eyes', C.iris], ['Outline', C.line]];
+document.getElementById('swatches').innerHTML = sw.map(([n, h]) => `<div class="sw"><i style="background:${h}"></i><div>${n}<br><code>${h}</code></div></div>`).join('');
+
+// proportions: cartoon vs realistic, head units
+(function () {
+  const ink = getComputedStyle(document.documentElement).getPropertyValue('--muted').trim() || '#666';
+  let o = '';
+  const H = 200, base = 230, top = 28, feet = 442, unit = H * 160 / (feet - top);   // one head = 160 sheet units
+  for (let i = 0; i * unit <= H + 1; i++) { const y = base - i * unit; o += `<line x1="10" x2="390" y1="${y}" y2="${y}" stroke="currentColor" stroke-opacity=".15"/><text x="8" y="${y - 3}" font-size="10" fill="currentColor" fill-opacity=".7">${i}</text>`; }
+  const k = H / (feet - top);
+  o += `<g transform="translate(${150 - 150 * k} ${base - H - top * k}) scale(${k})">${body()}${head(EXPR.smile)}</g>`;
+  // realistic Ace silhouette: 8 heads at the same height
+  const hh = H / 8; o += `<g fill="currentColor" fill-opacity=".22"><circle cx="285" cy="${base - H + hh / 2}" r="${hh / 2}"/><rect x="262" y="${base - H + hh}" width="46" height="${H * .42}" rx="10"/><rect x="266" y="${base - H + hh + H * .42}" width="17" height="${H * .45}" rx="6"/><rect x="287" y="${base - H + hh + H * .42}" width="17" height="${H * .45}" rx="6"/></g>`;
+  o += `<text x="150" y="${base + 18}" font-size="12" text-anchor="middle" fill="currentColor">Cartoon: about 2½ heads</text><text x="285" y="${base + 18}" font-size="12" text-anchor="middle" fill="currentColor">Realistic: 8 heads</text>`;
+  document.getElementById('heights').innerHTML = `<svg viewBox="0 0 400 260" role="img" aria-label="Height comparison in head units" style="color:var(--ink)">${o}</svg>`;
+})();
+</script>

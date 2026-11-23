@@ -1,0 +1,48 @@
+# Test scenes
+
+## `ace_sit_mug_test.blend` — Ace sits down and drinks tea
+
+An 8-second (192 frames, 24 fps) action test for the breakfast scene: Ace stands at a table, sits down, looks at his mug, picks it up, drinks, lowers it and smiles.
+
+| | |
+|---|---|
+| Ace | **linked** from `../../characters/ace_v007.blend` (collection `Ace`) with an editable library override. Fixes to the master file show up here on reload. |
+| Action | `Ace_sit_mug` on `Ace.rig`. Arms are in IK for this shot (`IK_FK` = 0) so the right hand can be placed exactly on the mug; legs stay IK so the feet stay planted while he sits |
+| Mug | handle turned toward his right hand (mug rotated −96°). `PROP_mug` has a Child Of constraint ("Held by Ace") to `ORG-hand.R`; its influence switches from 0 to 1 at frame 106, when his fingers have closed on the handle |
+| Grip | a real mug hold: index and middle fingers hooked through the handle, thumb resting on top of the handle, ring and little fingers tucked under. The hand pose is stored relative to the mug, so every hand key after the grab is "mug pose × grip" and the grip never slips |
+| Drink | matched to a reference photo of a relaxed sip. The cup is brought to the mouth: the rim rests on the lower lip (`lip.B`) and the cup follows the direction his face points. While drinking, the handle faces forward and to his right (62° off his face direction), so his hand is in front and to the side of the cup with the knuckles out. His wrist sits just below the rim, the forearm rises diagonally, and the elbow is out to the side, in front of and below the shoulder. Gentle tilt: 6° → 16° → 26° → 31° → 16°. He settles back into the chair, keeps his head nearly upright (up to 5°) and turns it to his left (up to 15°), eyes open and gazing out. Jaw opens 2° |
+| Face | blinks (frames 16, 74, 148, 178), eyes open while drinking, smile from frame 150 using the lip corner controls (`lip_end.*.001`) |
+| Set | `Set_breakfast_test`, built from simple shapes: table, chair, rug; a window in the side wall (frame, glass, sill) looking out on a sunrise sky and a far city skyline; floor lamp with a glowing shade; wall picture, a clock whose second hand ticks once a second, a shelf of books; a plant by the window. On the table: mug on a saucer, teapot, a plate of toast, and a napkin with Ace's drone sketch and a pencil (the blueprint's breakfast beat) |
+| Lighting | key `SET_key_window`, a large soft warm area light at the window; low warm morning sun through the window (`SET_sun_morning`); dim cool fill from the camera side (`SET_fill`) so shadows stay soft; warm practical from the lamp (`SET_lamp_bulb`); a soft rim behind him (`SET_rim`). Colour look: AgX Medium High Contrast |
+| Cameras | `CAM_wide` pushes in slowly over the whole shot (0.75 m). Cut to `CAM_close` (52 mm, shallow depth of field, slow push) at frame 113 for the lift and sip, then back to the wide at 162 for the smile. The cuts are timeline markers bound to cameras |
+| Acting | small smile while standing, focus (brows down) while sitting, brows lift when he looks at his tea, soft eyes while sipping, a warm smile after it. Blinks at 16, 46, 74, 92, 148, 178. At the end he turns from the window back to the cup and glances down at his napkin sketch |
+
+Timeline: 1–12 stand · 12–60 sit down · 60–84 settle and look at the mug · 84–104 reach and grab · 104–140 lift and drink · 140–166 lower the mug · 166–192 hold, smile, look up.
+
+### Things this test found
+- **Hand axes on Ace's rig** (important for any hand pose): fingers point along the hand's local **Y**; the knuckles run along **Z** (index side +Z); the palm faces **−X on the right hand** and **+X on the left**. Finger master controls (`f_*.01_master`) curl toward the palm with **+X** rotation.
+- The first mug prop had its body 4.75 cm lower than its handle and tea (origin in the middle of the cup); fixed so the origin is at the base.
+- **Face shape keys can't be animated in a scene that links Ace**, because the mesh and its shape keys stay linked. Use the rig's face controls in scenes, or (next step for the master file) add rig custom properties that drive the ARKit shape keys so they become animatable through the override.
+- **Elbow placement:** with IK arms the elbow sits wherever the shoulder–wrist geometry allows, so put the *hand* where a person would (beside and slightly under the cup) and the elbow follows. Rotating `upper_arm_ik.R` on its Y axis swings the elbow around that line for fine-tuning.
+- **Lifting to the mouth:** with only a few keys, the IK elbow tucked back against the ribs and then jumped up (seconds 4–5 of the first version). The lift is now keyed every 2 frames (106–128): the cup follows one curved path that rises close to the body and then comes in to the lips, it turns gradually from the table grip to the drinking angle, and the elbow swing (`upper_arm_ik.R` Y) is solved per frame so the elbow travels smoothly forward and up. Keep big lean changes slow; leaning back fast while lifting looked like a jolt.
+- The tea surface tilts with the mug instead of staying level; it's hidden at the lips in this shot, but a close-up would need the liquid kept level.
+
+- **Smiles through the lip-corner controls need bigger moves than you'd expect:** about 7 mm out and 8 mm up on `lip_end.*.001`, plus the `cheek.T.*.001` controls lifting, before a smile reads in a medium close-up.
+- When checking a single frame with a different camera, remove the camera markers first; markers override the active camera.
+
+The set pieces are placeholders; swap them for BlenderKit or Poly Haven furniture when the real flat is built.
+
+## `tori_mixamo_test.blend` — Mixamo motion on Tori
+
+Links Tori from `../../characters/tori_v003.blend` (library override) and imports Mixamo FBX files (Mixamo's own mesh is hidden; only its skeleton is used as the source).
+
+| Action on `Tori.rig` | Source | Result |
+|---|---|---|
+| `Tori_mx_sitting` | `Female Sitting Pose.fbx` | pose matches (bone directions within 6°); **skirt does not drape over the lap** — needs cloth simulation |
+| `Tori_mx_catwalk` | `Catwalk Twist L To Twist R.fbx` (151 frames, keyed every 2nd frame) | works standing, in heels; feet planted on the floor |
+
+**How the retarget works:** 52 bone pairs (spine, neck, head, shoulders, arms, hands, all fingers, legs, feet, toes) map onto Tori's FK controls (`*_fk`, `spine_fk.00x`, `torso`); arms and legs are switched to FK. For each pair a fixed offset is measured once from the rest poses (Mixamo T-pose vs Tori A-pose: align the bone directions, keep the remainder as the offset); each frame the control's world rotation = Mixamo bone world rotation × offset, solved parent before child. Hips move with Mixamo's hips scaled by hip height, then the whole action is lifted so the lowest foot touches the floor.
+
+**Mixamo download settings:** Format **FBX Binary (.fbx)** (FBX 7.x; `character.fbx` / `character (1).fbx` are FBX 6.1 and Blender can't import them), **24 fps**, Skin either way.
+
+**Importing FBX by script** needs a 3D-view context and an active object, but must not pin the active object (the importer switches to the new armature itself).
