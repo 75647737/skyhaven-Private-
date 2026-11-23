@@ -45,6 +45,10 @@ for n in ("MN_House", "MN_Grounds", "MN_Car", "MN_Cams"):
     COLLS[n] = c
 RIG = bpy.data.objects.new("MN.root", None)
 ROOT.objects.link(RIG)
+# Ace's car lives outside "Mansion" so shots that link the house can drive their own car
+ROOT.children.unlink(COLLS["MN_Car"])
+S.collection.children.link(COLLS["MN_Car"])
+COLLS["MN_Car"].objects.link(RIG)
 RIG.scale = (K.SCALE,) * 3
 K.PARENT[0] = RIG
 use(COLLS["MN_House"])
@@ -276,6 +280,10 @@ S.eevee.taa_render_samples = 16
 S.view_settings.view_transform = 'Standard'
 S.render.resolution_x, S.render.resolution_y = 1920, 1080
 S.render.fps = 24
+
+# merge static pieces (EEVEE drops surfaces with a few hundred outlined objects in a city shot)
+for cn in ("MN_House", "MN_Grounds", "MN_Car"):
+    consolidate(COLLS[cn], ("MN.lattice_screen", "MN.root"))
 
 if OUT:
     bpy.ops.wm.save_as_mainfile(filepath=OUT)

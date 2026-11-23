@@ -296,12 +296,18 @@ for x in (-62, 62):
 for x in (5.2, 14.8):
     gw.box(x - 0.8, x + 0.8, -59.0, -57.6, 0.0, 3.2, "stone2")
     gw.box(x - 0.9, x + 0.9, -59.1, -57.5, 3.2, 3.45, "white_c")
-for k in range(16):
-    x = 6.2 + k * 0.5
-    gw.box(x - 0.04, x + 0.04, -58.35, -58.25, 0.1, 2.3, "frame")
-gw.box(6.0, 14.0, -58.4, -58.2, 2.2, 2.35, "frame")
-gw.box(6.0, 14.0, -58.4, -58.2, 1.0, 1.1, "frame")
 gw.done(outline=0.03)
+# two gate leaves hinged on the pillars (separate objects so the drive can swing them open)
+for side, hx, sx in (("L", 6.0, 1), ("R", 14.0, -1)):
+    lf = P("CT.mansion_gate_" + side)
+    for k in range(8):
+        x = sx * (0.2 + k * 0.5)
+        lf.box(x - 0.04, x + 0.04, -0.05, 0.05, 0.1, 2.3, "frame")
+    lf.box(min(0, sx * 4.0), max(0, sx * 4.0), -0.1, 0.1, 2.2, 2.35, "frame")
+    lf.box(min(0, sx * 4.0), max(0, sx * 4.0), -0.1, 0.1, 1.0, 1.1, "frame")
+    lf.box(min(0, sx * 4.0), max(0, sx * 4.0), -0.1, 0.1, 0.1, 0.22, "frame")
+    lf.box(-0.08, 0.08, -0.08, 0.08, 0.0, 2.4, "frame")
+    lf.done((hx, -58.3, 0.0), 0, outline=0.02)
 label("CT.mansion_number", "7", (5.2, -59.15, 2.6), 0, 0.6, M["frame"], 0.05)
 
 
@@ -717,8 +723,12 @@ for k, col in enumerate(("car_r", "car_b", "car_w", "car_k", "car_y", "car_s")):
     CARS.append(template(c, "CT.car_t%d" % k, outline=0.02))
 
 
-def traffic(pts, width, n, lanes=2, allowed=None):
-    """Parked-looking traffic; `allowed` lanes keep Ace's driving lane clear (see build_airport_drive)."""
+KEEP_CLEAR = [((100, -66), 45), ((10, -66), 30), ((3150, -2575), 30), ((1300, -66), 40)]
+
+
+def traffic(pts, width, n, lanes=2, allowed=None, oneway=False):
+    """Parked-looking traffic, driving on the LEFT (Kenya); `allowed` lanes keep Ace's lane clear.
+    oneway: every lane runs along the polyline, lane 0 nearest the right-hand kerb."""
     segs = [(Vector(a), Vector(b)) for a, b in zip(pts, pts[1:])]
     total = sum((b - a).length for a, b in segs)
     for i in range(n):
@@ -730,7 +740,12 @@ def traffic(pts, width, n, lanes=2, allowed=None):
                 lane = random.choice(allowed or list(range(lanes)))
                 side = 1 if lane < lanes / 2 else -1
                 off = (width / 2) * (0.25 + 0.5 * (lane % (lanes // 2 or 1)) / max(1, lanes // 2)) * side
-                p = a + d * s + Vector((-d.y, d.x)) * -off
+                if oneway:
+                    side = 1
+                    off = (width / 2) * (-0.75 + 1.5 * lane / max(1, lanes - 1))
+                p = a + d * s + Vector((-d.y, d.x)) * off           # + = left of travel (keep left)
+                if any((p - Vector(c)).length < r for c, r in KEEP_CLEAR):
+                    break                                            # no parked cars in junctions / crossings
                 # car local front is -Y; heading rotates -Y onto the travel direction
                 heading = math.degrees(math.atan2(-d.x * side, d.y * side)) + 180
                 dup(random.choice(CARS), "CT.car", (p.x, p.y, 0.03), heading)
@@ -747,7 +762,7 @@ for y in DY:
     traffic([(DX[0], y), (DX[-1], y)], 18, 8)
 for y in MP_Y:
     traffic([(-1450, y), (-680, y)], 10, 5)
-traffic([(2700, -2575), (3950, -2575)], 22, 30, 4, allowed=[0, 2, 3])
+traffic([(2700, -2575), (3950, -2575)], 22, 30, 4, allowed=[1, 2, 3], oneway=True)
 # parked cars
 for k in range(140):
     dup(random.choice(CARS), "CT.car_parked", (random.uniform(3060, 3590), random.uniform(-2505, -2435), 0.03),
@@ -771,7 +786,7 @@ fe.box(1010.5, 1012, -1032, -1026, 3.2, 3.5, "metal")
 fe.done(outline=0.03)
 
 flush_batches()
-SKIP = ("CT.jet_", "CT.school_bus", "CT.academy_bus", "CT.family2_home", "CT.mansion")
+SKIP = ("CT.jet_", "CT.school_bus", "CT.academy_bus", "CT.family2_home", "CT.mansion_gate", "CT.mansion")
 for cn in ("CT_Ground", "CT_Roads", "CT_Heights", "CT_Downtown", "CT_Civic", "CT_MaplePark", "CT_Airport",
            "CT_Nature", "CT_Traffic"):
     K.PARENT[0] = RIG

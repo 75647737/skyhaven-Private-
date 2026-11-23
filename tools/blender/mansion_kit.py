@@ -583,3 +583,118 @@ def consolidate(coll, skip_prefixes=(), name=None):
                 bpy.data.meshes.remove(d)
         made.append(ob)
     return made
+
+
+# ---------------------------------------------------------------- natural flowers
+FLOWER_KINDS = {
+    #  name        petals  length  width  tilt   petal colour  centre      height
+    "daisy":      (10,     0.11,   0.035, 12,    "#fbf8f2",    "#f2c230",  0.40),
+    "cosmos":     (8,      0.12,   0.05,  18,    "#f07aa8",    "#f6d04d",  0.50),
+    "marigold":   (14,     0.07,   0.04,  30,    "#f28a2e",    "#d9601e",  0.32),
+    "tulip":      (3,      0.12,   0.07,  72,    "#e2453c",    "#3a2a1e",  0.45),
+    "tulip_y":    (3,      0.12,   0.07,  72,    "#f6c936",    "#3a2a1e",  0.45),
+    "hibiscus":   (5,      0.15,   0.09,  20,    "#d6304a",    "#f6e05a",  0.55),
+    "violet":     (5,      0.07,   0.05,  15,    "#8a5cc7",    "#f6e05a",  0.28),
+}
+
+
+def _petal(p, ang, length, width, tilt, base_z, mat, cup=False):
+    """One petal: a slightly cupped leaf shape from the centre outwards."""
+    ca, sa = math.cos(ang), math.sin(ang)
+    t = math.radians(tilt)
+    def pt(r, side, lift=0.0):
+        x = r * math.cos(t)
+        z = base_z + r * math.sin(t) + lift
+        return Vector((ca * x - sa * side, sa * x + ca * side, z))
+    v = [pt(0.012, 0.0), pt(length * 0.45, width * 0.5, 0.006), pt(length, 0.0, -0.004 if not cup else 0.01),
+         pt(length * 0.45, -width * 0.5, 0.006), pt(length * 0.5, 0.0, 0.012)]
+    tmp = bmesh.new()
+    vs = [tmp.verts.new(c) for c in v]
+    for f in ((0, 1, 4), (1, 2, 4), (2, 3, 4), (3, 0, 4)):
+        tmp.faces.new([vs[i] for i in f])
+    p._merge(tmp, mat, True)
+
+
+def _leaf(p, ang, z, length, width, mat):
+    ca, sa = math.cos(ang), math.sin(ang)
+    pts = [(0.0, 0.0, z), (length * 0.5, width * 0.5, z + 0.03), (length, 0.0, z + 0.015),
+           (length * 0.5, -width * 0.5, z + 0.03), (length * 0.5, 0.0, z + 0.05)]
+    tmp = bmesh.new()
+    vs = [tmp.verts.new((ca * x - sa * y, sa * x + ca * y, zz)) for x, y, zz in pts]
+    for f in ((0, 1, 4), (1, 2, 4), (2, 3, 4), (3, 0, 4)):
+        tmp.faces.new([vs[i] for i in f])
+    p._merge(tmp, mat, True)
+
+
+def flower_template(kind, scale=2.2):
+    """A real-looking flower (stem, two leaves, ring of petals, centre), hidden, for scatter()."""
+    n, L, wd, tilt, pc, cc, h = FLOWER_KINDS[kind]
+    for key, col in (("fp_" + kind, pc), ("fc_" + kind, cc)):
+        if key not in M:
+            M[key] = toon("FL_" + key, col, ks=(0.72, 0.9, 1.0))
+    if "stem" not in M:
+        M["stem"] = toon("FL_stem", "#3f8a37", ks=(0.7, 0.88, 1.0))
+    p = P("FL." + kind + "_t")
+    s = scale
+    p.cyl((0, 0, h * s / 2), 0.012 * s, h * s, "stem", segs=5)
+    for a in (0.3, 0.3 + math.pi * 0.9):
+        _leaf(p, a, h * s * 0.25, 0.16 * s, 0.06 * s, "stem")
+    hz = h * s
+    if kind.startswith("tulip"):
+        for i in range(6):
+            _petal(p, i / 6 * math.tau, L * s, wd * s, tilt, hz, "fp_" + kind, cup=True)
+    else:
+        for i in range(n):
+            _petal(p, i / n * math.tau + (0.2 if i % 2 else 0.0), L * s, wd * s, tilt + (6 if i % 2 else 0), hz,
+                   "fp_" + kind)
+        if n >= 12:                                    # second inner ring for full flowers
+            for i in range(n):
+                _petal(p, i / n * math.tau + 0.25, L * s * 0.7, wd * s, tilt + 25, hz + 0.01 * s, "fp_" + kind)
+    p.cyl((0, 0, hz + 0.008 * s), 0.024 * s, 0.022 * s, "fc_" + kind, segs=8)
+    ob = p.done(outline=0.0)
+    ob.hide_render = ob.hide_viewport = True
+    return ob
+
+
+def scatter(name, coll, items, outline=0.0):
+    """Merge many copies of template objects into one mesh.
+    items: (template_object, (x, y, z), rot_z_radians, scale)."""
+    bm = bmesh.new()
+    mats = []
+    cache = {}
+    for src, loc, rot, sc in items:
+        me = src.data
+        if me.name not in cache:
+            cache[me.name] = me
+        tmp = bmesh.new()
+        tmp.from_mesh(me)
+        for f in tmp.faces:
+            m = me.materials[f.material_index] if f.material_index < len(me.materials) else None
+            if m is None or m == OUTL:
+                m = me.materials[0]
+            if m not in mats:
+                mats.append(m)
+            f.material_index = mats.index(m)
+        mw = Matrix.Translation(Vector(loc)) @ Matrix.Rotation(rot, 4, 'Z') @ Matrix.Diagonal((sc, sc, sc, 1))
+        bmesh.ops.transform(tmp, matrix=mw, verts=tmp.verts)
+        tm = bpy.data.meshes.new("_s")
+        tmp.to_mesh(tm)
+        tmp.free()
+        bm.from_mesh(tm)
+        bpy.data.meshes.remove(tm)
+    me = bpy.data.meshes.new(name)
+    bm.to_mesh(me)
+    bm.free()
+    for m in mats:
+        me.materials.append(m)
+    ob = bpy.data.objects.new(name, me)
+    coll.objects.link(ob)
+    if PARENT[0]:
+        ob.parent = PARENT[0]
+    if outline:
+        for _ in mats:
+            me.materials.append(OUTL)
+        so = ob.modifiers.new("Outline", 'SOLIDIFY')
+        so.thickness, so.offset, so.use_flip_normals = outline, 1, True
+        so.material_offset, so.use_rim = len(mats), False
+    return ob

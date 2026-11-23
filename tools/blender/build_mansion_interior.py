@@ -921,5 +921,6 @@ def set_excl(vl, name, ex):
 set_excl(vl_ext, "Mansion_Interior", True)
 set_excl(vl_int, "Mansion_Interior", False)
 set_excl(vl_int, "Mansion", True)
+set_excl(vl_int, "MN_Car", True)
 if OUT:
     bpy.ops.wm.save_as_mainfile(filepath=OUT)

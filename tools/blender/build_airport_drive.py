@@ -334,12 +334,12 @@ def smooth_corners(pts, r):
 
 
 SKY = [(1300, -66), (1360, -200), (1360, -1400), (1800, -2000), (2400, -2430), (2700, -2560)]
-sky_lane = offset_line(SKY, 10.5)          # outer southbound lane (kept clear of traffic)
+sky_lane = offset_line(SKY, -10.5)         # outer southbound lane on the LEFT (Kenya), kept clear
 LEGS = [  # (points, speed m/s, marker name)
     ([(9.8, 2.4), (9.8, -20.0), (10.0, -52.0)], 3.5, "driveway"),
-    ([(10.0, -52.0), (10.6, -62.0), (16.0, -70.0)], 4.0, "gate"),
-    ([(16.0, -70.0), (1270.0, -70.0)], 16.0, "heights_avenue"),
-    ([(1270.0, -70.0)] + [tuple(p) for p in sky_lane[1:-1]] + [(2690.0, -2572.0)], 30.0, "skyway"),
+    ([(10.0, -52.0), (10.6, -60.0), (16.0, -62.0)], 4.0, "gate"),
+    ([(16.0, -62.0), (1270.0, -62.0)], 16.0, "heights_avenue"),
+    ([(1270.0, -62.0)] + [tuple(p) for p in sky_lane[1:-1]] + [(2690.0, -2572.0)], 30.0, "skyway"),
     ([(2690.0, -2572.0), (2760.0, -2583.2), (3240.0, -2583.2)], 11.0, "frontage"),
     ([(3240.0, -2583.2), (3300.0, -2583.2)], 4.0, "dropoff"),
 ]
