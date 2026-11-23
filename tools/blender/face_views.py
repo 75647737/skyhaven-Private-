@@ -3,8 +3,9 @@
     blender -b <char.blend> --python tools/blender/face_views.py -- <PREFIX> <out_dir> [tag]
 
   <tag>_turn.png     head in front, three-quarter and true side view, side by side (neutral smile)
+  <tag>_turn_close.png  the same three views, closer, face filling the frame
   <tag>_mouth.png    the nine mouth shapes (0 smile, 1 rest, 2 A, 3 E, 4 O, 5 U/W, 6 M/B/P, 7 F/V,
-                     8 frown), each in front (top row) and side view (bottom row)
+                     8 frown), each in front, three-quarter and side view (rows), close up
   <tag>_expr.png     expressions in front and three-quarter: happy, talking, surprised, cross,
                      worried, blink
 """
@@ -90,13 +91,18 @@ def stitch(rows, path):
 
 setp(mouth=0)
 stitch([[tile("t_front", 0), tile("t_3q", 35), tile("t_side", 90)]], os.path.join(OUT, TAG + "_turn.png"))
+# close-up: the face fills the frame, so profile volume (nose, lips, chin, ear) can be judged
+tgt = Vector((0, 0, bot + H * 0.42))
+stitch([[tile("c_front", 0, dist=H * 2.5), tile("c_3q", 35, dist=H * 2.5), tile("c_side", 90, dist=H * 2.5)]],
+       os.path.join(OUT, TAG + "_turn_close.png"))
 
-top_row, side_row = [], []
+top_row, q_row, side_row = [], [], []
 for m in range(9):
     setp(mouth=m)
-    top_row.append(tile("m%d_f" % m, 0, res=(360, 400)))
-    side_row.append(tile("m%d_s" % m, 90, res=(360, 400)))
-stitch([top_row, side_row], os.path.join(OUT, TAG + "_mouth.png"))
+    top_row.append(tile("m%d_f" % m, 0, res=(360, 360), dist=H * 2.9))
+    q_row.append(tile("m%d_q" % m, 35, res=(360, 360), dist=H * 2.9))
+    side_row.append(tile("m%d_s" % m, 90, res=(360, 360), dist=H * 2.9))
+stitch([top_row, q_row, side_row], os.path.join(OUT, TAG + "_mouth.png"))
 
 EXPR = [("happy", dict(mouth=0, brows=0.4)), ("talk", dict(mouth=3, brows=0.2)),
         ("surprised", dict(mouth=4, brows=1.0)), ("cross", dict(mouth=8, brows=-0.6, brow_tilt=-1.0)),

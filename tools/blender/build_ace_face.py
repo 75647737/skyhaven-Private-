@@ -76,22 +76,24 @@ def prof(z):
     return PROF[-1][1]
 
 
-# nose: a ridge of gaussians from the root between the eyes down to the tip, plus tip ball and wings
+# nose (after the reference faces: soft wide bridge, a big round bulb tip that turns under, wide full
+# wings level with the inner eye corners): a ridge of gaussians from between the eyes to the tip,
+# then the bulb and the two wings
 NOSE = []
 for k in range(14):
     t = k / 13
-    NOSE.append((0.0, 0.797 - 0.068 * t, 0.003 + 0.025 * t ** 1.25, 0.0085 + 0.005 * t, 0.0085))
-NOSE += [(0.0, 0.7265, 0.0335, 0.0145, 0.0105),            # tip
-         (0.0165, 0.7165, 0.0135, 0.0075, 0.0075),           # wings
-         (-0.0165, 0.7165, 0.0135, 0.0075, 0.0075)]
+    NOSE.append((0.0, 0.799 - 0.060 * t, 0.003 + 0.016 * t ** 1.5, 0.0110 + 0.0075 * t, 0.0090))
+NOSE += [(0.0, 0.7240, 0.0390, 0.0215, 0.0195),            # bulb tip
+         (0.0200, 0.7155, 0.0215, 0.0110, 0.0095),           # wings
+         (-0.0200, 0.7155, 0.0215, 0.0110, 0.0095)]
 RELIEF = [  # (x, z, amount forward, sigma x, sigma z)  summed
     (0.045, 0.868, 0.0030, 0.030, 0.010), (-0.045, 0.868, 0.0030, 0.030, 0.010),   # brow ridge
-    (0.0, 0.7035, 0.0040, 0.0120, 0.0060),                                         # philtrum
-    (0.0, 0.6985, 0.0050, 0.0270, 0.0045),                                         # upper lip
-    (0.0, 0.6880, -0.0030, 0.0330, 0.0025),                                        # mouth line
-    (0.0, 0.6770, 0.0055, 0.0230, 0.0055),                                         # lower lip
-    (0.0, 0.6660, -0.0030, 0.0250, 0.0050),                                        # groove under the lip
-    (0.0, 0.6500, 0.0075, 0.0260, 0.0110),                                         # chin
+    (0.0, 0.7040, 0.0055, 0.0120, 0.0060),                                         # philtrum
+    (0.0, 0.6990, 0.0100, 0.0280, 0.0050),                                         # upper lip
+    (0.0, 0.6880, -0.0050, 0.0340, 0.0026),                                        # mouth line
+    (0.0, 0.6765, 0.0095, 0.0250, 0.0058),                                         # lower lip
+    (0.0, 0.6655, -0.0045, 0.0260, 0.0048),                                        # groove under the lip
+    (0.0, 0.6500, 0.0090, 0.0270, 0.0110),                                         # chin
     (0.068, 0.722, 0.0045, 0.022, 0.022), (-0.068, 0.722, 0.0045, 0.022, 0.022),   # cheeks
     (0.062, 0.808, -0.0030, 0.026, 0.024), (-0.062, 0.808, -0.0030, 0.026, 0.024),  # soft eye sockets
 ]
@@ -111,8 +113,8 @@ def shape_point(p):
         for (x, z, a, sx, sz) in RELIEF:
             d += a * g(q.x - x, sx) * g(q.z - z, sz)
         nose = 0.0
-        for (x, z, a, sx, sz) in NOSE:
-            nose = max(nose, a * g(q.x - x, sx) * g(q.z - z, sz))
+        for (x, z, a, sx, sz) in NOSE:          # the underside turns in faster than the bridge rises
+            nose = max(nose, a * g(q.x - x, sx) * g(q.z - z, sz if q.z >= z else sz * 0.66))
         q.y -= (d + nose) * front
     return q
 
@@ -230,12 +232,25 @@ surf.display_type = 'WIRE'
 surf.hide_select = True
 
 
-def stick(ob, offset):
+def stick(ob, offset, project=False):
+    """Lay ob onto the face. project=True: straight along the viewing axis (world Y) instead of to the
+    nearest point, so thin lines on the lips and under the nose stay clean lines (nearest-point
+    snapping pulls their sides into the lip groove and makes them jagged)."""
     sw = ob.modifiers.new("OnFace", 'SHRINKWRAP')
     sw.target = surf
     sw.wrap_method = 'NEAREST_SURFACEPOINT'
     sw.wrap_mode = 'ABOVE_SURFACE'
     sw.offset = offset
+    if project:
+        R = ob.matrix_world.to_3x3().normalized()
+        ax = [k for k in range(3) if abs(R.col[k].y) > 0.95]
+        if ax:
+            sw.wrap_method = 'PROJECT'
+            sw.use_project_x, sw.use_project_y, sw.use_project_z = (ax[0] == 0, ax[0] == 1, ax[0] == 2)
+            sw.use_negative_direction = sw.use_positive_direction = True
+            sw.cull_face = 'OFF'
+        else:
+            print("STICK: no local axis along Y for", ob.name, "- nearest point used")
     i = len(ob.modifiers) - 1
     to = 0
     for j, m in enumerate(ob.modifiers):
@@ -324,7 +339,7 @@ for side in ("L", "R"):
 for o in bpy.data.objects:
     if o.name.startswith(P + "mouth."):
         off = 0.0010 if o.name.endswith("_in") else 0.0020 if ("teeth" in o.name) else 0.0016 if "tongue" in o.name else 0.0024
-        stick(o, off)
+        stick(o, off, project=True)
 nose_old = bpy.data.objects[P + "nose"]
 nose_old.hide_render = nose_old.hide_viewport = True
 
@@ -348,6 +363,7 @@ SKIN = bpy.data.materials[P[:-1] + "_skin"]
 OUTL = bpy.data.materials[P[:-1] + "_outline"]
 SKIN_D = darker(SKIN, P[:-1] + "_skin_fold", (0.55, 0.44, 0.40))
 NOSTRIL = darker(SKIN, P[:-1] + "_nostril", (0.32, 0.22, 0.2))
+BOWL = darker(SKIN, P[:-1] + "_ear_bowl", (0.84, 0.78, 0.75))
 
 
 # ------------------------------------------------------------------ ears
@@ -426,7 +442,9 @@ def build_ear(side):
     br = [top.lerp(at(-0.010, 0.026, 0.0118), t / 5) for t in range(6)]
     tube(bm, br, [0.0022 - 0.0006 * t / 5 for t in range(6)], N, 0)                             # upper fork
     ellipsoid(bm, at(-0.0035, -0.004, 0.0122), U, V, N, (0.0095, 0.0135, 0.0012), 2)          # concha bowl
-    ellipsoid(bm, at(-0.0185, -0.008, 0.0105), U, V, N, (0.0045, 0.0055, 0.0040), 0)          # tragus
+    ellipsoid(bm, at(-0.0175, -0.008, 0.0080), U, V, N, (0.0045, 0.0055, 0.0038), 0)          # tragus
+    for v in bm.verts:                    # 30 % bigger than first drawn: the folds must read at episode size
+        v.co = c + (v.co - c) * 1.3
     if s < 0:
         for v in bm.verts:
             v.co.x = -v.co.x
@@ -438,7 +456,7 @@ def build_ear(side):
     me = bpy.data.meshes.new(P + "ear_v005." + side)
     bm.to_mesh(me)
     bm.free()
-    for m in (SKIN, OUTL, SKIN_D, OUTL):
+    for m in (SKIN, OUTL, BOWL, OUTL):
         me.materials.append(m)
     ob.data = me
     for m in ob.modifiers:
@@ -458,8 +476,8 @@ for s in (-1, 1):
     t = bmesh.new()
     bmesh.ops.create_uvsphere(t, u_segments=12, v_segments=8, radius=1.0)
     for v in t.verts:
-        v.co = Vector((v.co.x * 0.0042, v.co.y * 0.0030, v.co.z * 0.0022))
-    vm = {v: bm.verts.new(v.co + Vector((s * 0.0080, -0.150, 0.7105))) for v in t.verts}
+        v.co = Vector((v.co.x * 0.0052, v.co.y * 0.0020, v.co.z * 0.0029))
+    vm = {v: bm.verts.new(v.co + Vector((s * 0.0105, -0.22, 0.7080))) for v in t.verts}
     for f in t.faces:
         bm.faces.new([vm[v] for v in f.verts]).smooth = True
     t.free()
@@ -475,19 +493,19 @@ nos.parent_type = 'BONE'
 nos.parent_bone = "head"
 bpy.context.view_layer.update()
 nos.matrix_world = Matrix()
-st = nos.modifiers.new("OnFace", 'SHRINKWRAP')
-st.target = surf
-st.wrap_method = 'NEAREST_SURFACEPOINT'
-st.wrap_mode = 'ABOVE_SURFACE'
-st.offset = 0.0006
+stick(nos, 0.0006, project=True)
 
-# nose fold: a soft line under the tip from one nostril wing to the other, so the nose reads from the front
+# nose creases: a curved line round each wing, from beside the bridge, round the outside of the wing
+# and in under it to the nostril - the lines a cartoon nose is drawn with, so it reads from the front
 bm = bmesh.new()
-arc = []
-for i in range(13):
-    t = i / 12 * 2 - 1
-    arc.append(Vector((t * 0.0215, -0.16, 0.7155 - 0.0055 * (1 - t * t) + 0.004 * t ** 4)))
-tube(bm, arc, [0.0012 + 0.0010 * (1 - abs(i / 6 - 1)) for i in range(13)], Vector((0, -1, 0)), 0, ring=8)
+for sd in (-1, 1):
+    arc = []
+    n = 15
+    for i in range(n):
+        ph = math.radians(100 - 185 * i / (n - 1))
+        arc.append(Vector((sd * (0.0200 + 0.0128 * math.cos(ph)), -0.22, 0.7155 + 0.0118 * math.sin(ph))))
+    rads = [0.0005 + 0.0009 * math.sin(math.pi * i / (n - 1)) ** 0.7 for i in range(n)]
+    tube(bm, arc, rads, Vector((0, -1, 0)), 0, ring=8)
 fme = bpy.data.meshes.new(P + "nose_fold")
 bm.to_mesh(fme)
 bm.free()
@@ -498,11 +516,7 @@ for c in head.users_collection:
 fold.parent, fold.parent_type, fold.parent_bone = rig, 'BONE', "head"
 bpy.context.view_layer.update()
 fold.matrix_world = Matrix()
-sf = fold.modifiers.new("OnFace", 'SHRINKWRAP')
-sf.target = surf
-sf.wrap_method = 'NEAREST_SURFACEPOINT'
-sf.wrap_mode = 'ABOVE_SURFACE'
-sf.offset = 0.0007
+stick(fold, 0.0007, project=True)
 
 rig.data.pose_position = 'POSE'
 bpy.context.view_layer.update()
