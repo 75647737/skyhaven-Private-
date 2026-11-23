@@ -113,6 +113,20 @@ ls._mpfb_data = r + r"\data"; ls._mpfb_root = r
 - **2D:** `characters/2d/ace_cartoon.html` (renders to `ace_cartoon_sheet.png`): original cartoon model sheet — front view, four expressions (easy smile, still planning, surprised, tired), palette from the blueprint, 5-heads-tall proportions vs the realistic 8.
 - **3D toon:** `ace_toon_v001.blend` — a copy of `ace_v007.blend` with flat 3-tone cel materials (emission through Shader to RGB + constant ramp), an inverted-hull outline (Solidify, flipped normals, `TOON_outline` material) and bigger eyes. Rig, idle and face controls are unchanged. Proportions are still realistic: scaling the head by pose bones or a shape key tore the Rigify face, so a true big-head 3D cartoon Ace needs a new head mesh built from the 2D sheet.
 
+### Cartoon Ace, face that turns (`ace_cartoon_v005.blend`) — face test, Ace only
+
+Built from v004 by `tools/blender/build_ace_face.py`; review sheets by `tools/blender/face_views.py` (`blender -b <file> --python tools/blender/face_views.py -- AC <out_dir> [tag]`).
+
+| | |
+|---|---|
+| Head | `AC.head` re-sampled from v004's head (same skull and hairline) at high resolution, then given a continuous profile: forehead, soft brow ridge, a nose sculpted into the head (bridge from between the eyes, rounded tip, nostril wings, turned-under base), philtrum, upper lip, mouth line, lower lip, chin, and a jaw brought forward of the old egg shape. The old `AC.nose` blob is hidden. |
+| Ears | `AC.ear.L/R` rebuilt: outer rim (helix) from above the tragus round to the lobe, a Y-shaped inner fold (antihelix), a darker bowl (concha, `AC_skin_fold`), tragus, fleshy lobe; outlined so the folds draw; splayed forward a little so they read from the front. |
+| Nose details | `AC.nostrils` (two dark openings under the tip) and `AC.nose_fold` (a soft line under the tip from wing to wing, so the nose reads from the front). |
+| Attached features | eye whites, irises, pupils, highlights, brows, nostrils, nose fold and every mouth piece have a `OnFace` Shrinkwrap onto `AC.head_surface` (a twin of the head that shares its mesh and shape keys but is invisible to camera and shadows), so they lie on the curve of the face and stay on it through turns, blinks and jaw moves. The eye parts are single front sheets now, each eye white has a dark rim (`AC.eye_rim.L/R`) on the same eye bone, so blinks still work. |
+| Mouth rig | the face itself moves with the `mouth` slider (0 smile, 1 rest, 2 A, 3 E, 4 O, 5 U/W, 6 M/B/P, 7 F/V, 8 frown): head shape keys `jaw_open`, `lips_round`, `lips_press`, `lip_tuck`, `smile`, `frown` are driven from it, on top of the existing mouth shapes. `blink`, `look_x/y`, `brows`, `brow_tilt` unchanged (same names and ranges, so the breakfast lip-sync keys should drive it; not yet re-run on v005). |
+
+Sheets: `characters/3d/ace_v005_turn.png` (front, three-quarter, side), `ace_v005_mouth.png` (nine mouth shapes, front and side), `ace_v005_expr.png` (happy, talking, surprised, cross, worried, blink in front and three-quarter); `ace_v004_turn.png` is the before.
+
 ### Cartoon Ace, short version (`ace_cartoon_v001.blend`) — the chosen cartoon style
 
 Short and chunky, about 2½ heads tall (1.04 m), built in Blender straight from the 2D sheet's measurements (1 sheet unit = 2.5 mm). Simple rounded shapes: big head with large eyes (white, iris, pupil, highlight), curve brows and smile, hair cap with a front hairline, sweater with collar, hem and cable lines, mitt hands, short legs, rounded shoes. Flat 3-tone cel materials (`AC_*`) and an inverted-hull outline (`AC_outline`).
