@@ -5,6 +5,7 @@ Geometry is written in real metres; the scripts parent everything to MN.root,
 which scales the house to the cartoon characters (see SCALE).
 """
 import bpy, bmesh, math, random
+import math as math_mod
 from mathutils import Vector, Matrix
 
 SCALE = 0.62          # real metres -> cartoon set units (Ace is 1.07 = a 1.73 m adult)
@@ -285,3 +286,230 @@ def tree(name, x, y, s=1.0, trunk_h=3.2):
     blobs(name + "_crown", it, [M["leaf1"], M["leaf2"]], outline=0.03)
 
 
+
+
+# ---------------------------------------------------------------- pieces (multi-material objects)
+class P:
+    """One furniture object made of boxes, cylinders, blobs and beams in local
+    coordinates (origin on the floor at the footprint centre, front = -Y)."""
+
+    def __init__(s, name):
+        s.name, s.bm, s.mats = name, bmesh.new(), []
+
+    def mi(s, k):
+        m = M[k]
+        if m not in s.mats:
+            s.mats.append(m)
+        return s.mats.index(m)
+
+    def _merge(s, tmp, k, smooth, xf=None):
+        if xf is not None:
+            bmesh.ops.transform(tmp, matrix=xf, verts=tmp.verts)
+        me = bpy.data.meshes.new("_t")
+        tmp.to_mesh(me)
+        tmp.free()
+        off = len(s.bm.faces)
+        s.bm.from_mesh(me)
+        s.bm.faces.ensure_lookup_table()
+        i = s.mi(k)
+        for f in s.bm.faces[off:]:
+            f.material_index = i
+            f.smooth = smooth
+        bpy.data.meshes.remove(me)
+
+    def box(s, x0, x1, y0, y1, z0, z1, k, taper=None, xf=None):
+        t = bmesh.new()
+        add_box(t, x0, x1, y0, y1, z0, z1, 0, taper)
+        s._merge(t, k, False, xf)
+
+    def cyl(s, c, r, h, k, axis='Z', segs=20, r2=None, xf=None):
+        t = bmesh.new()
+        bmesh.ops.create_cone(t, cap_ends=True, segments=segs, radius1=r, radius2=r if r2 is None else r2, depth=h)
+        if axis == 'X':
+            bmesh.ops.rotate(t, verts=t.verts, cent=(0, 0, 0), matrix=Matrix.Rotation(math.pi / 2, 3, 'Y'))
+        elif axis == 'Y':
+            bmesh.ops.rotate(t, verts=t.verts, cent=(0, 0, 0), matrix=Matrix.Rotation(math.pi / 2, 3, 'X'))
+        bmesh.ops.translate(t, vec=Vector(c), verts=t.verts)
+        s._merge(t, k, True, xf)
+
+    def blob(s, c, r, k, subdiv=2):
+        t = bmesh.new()
+        bmesh.ops.create_icosphere(t, subdivisions=subdiv, radius=1)
+        for v in t.verts:
+            v.co = Vector((c[0] + v.co.x * r[0], c[1] + v.co.y * r[1], c[2] + v.co.z * r[2]))
+        s._merge(t, k, True)
+
+    def beam(s, p0, p1, w, h, k):
+        p0, p1 = Vector(p0), Vector(p1)
+        d = p1 - p0
+        t = bmesh.new()
+        bmesh.ops.create_cube(t, size=1)
+        xf = (Matrix.Translation((p0 + p1) / 2) @ d.to_track_quat('X', 'Z').to_matrix().to_4x4()
+              @ Matrix.Diagonal((d.length, w, h, 1)))
+        s._merge(t, k, False, xf)
+
+    def done(s, loc=(0, 0, 0), rot=0.0, outline=0.012):
+        ob = new_obj(s.name, s.bm, s.mats, outline, smooth=None)
+        ob.location = loc
+        ob.rotation_euler.z = math.radians(rot)
+        return ob
+
+
+
+
+# ---------------------------------------------------------------- node helpers for patterned toon materials
+def _sock(nt, v):
+    if isinstance(v, (int, float)):
+        n = nt.nodes.new('ShaderNodeValue')
+        n.outputs[0].default_value = v
+        return n.outputs[0]
+    return v
+
+
+def nmath(nt, op, a, b=None, clamp=False):
+    n = nt.nodes.new('ShaderNodeMath')
+    n.operation = op
+    n.use_clamp = clamp
+    nt.links.new(_sock(nt, a), n.inputs[0])
+    if b is not None:
+        nt.links.new(_sock(nt, b), n.inputs[1])
+    return n.outputs[0]
+
+
+def rgb(nt, hexcol):
+    n = nt.nodes.new('ShaderNodeRGB')
+    n.outputs[0].default_value = lin(hexcol) + [1]
+    return n.outputs[0]
+
+
+def mix(nt, fac, a, b, blend='MIX'):
+    n = nt.nodes.new('ShaderNodeMix')
+    n.data_type = 'RGBA'
+    n.blend_type = blend
+    ins = [s for s in n.inputs if s.type == 'RGBA']
+    nt.links.new(_sock(nt, fac), n.inputs[0])
+    nt.links.new(a, ins[0])
+    nt.links.new(b, ins[1])
+    return [s for s in n.outputs if s.type == 'RGBA'][0]
+
+
+def toon_shader(name, color_fn, ks=(0.62, 0.84, 1.0)):
+    """Toon material whose base colour comes from color_fn(node_tree) -> colour socket."""
+    m = bpy.data.materials.get(name) or bpy.data.materials.new(name)
+    m.use_nodes = True
+    nt = m.node_tree
+    nt.nodes.clear()
+    d = nt.nodes.new('ShaderNodeBsdfDiffuse')
+    s2r = nt.nodes.new('ShaderNodeShaderToRGB')
+    bw = nt.nodes.new('ShaderNodeRGBToBW')
+    cr = nt.nodes.new('ShaderNodeValToRGB')
+    nt.links.new(d.outputs[0], s2r.inputs[0])
+    nt.links.new(s2r.outputs[0], bw.inputs[0])
+    nt.links.new(bw.outputs[0], cr.inputs[0])
+    ramp = cr.color_ramp
+    ramp.interpolation = 'CONSTANT'
+    ramp.elements.new(0.5)
+    for e, p, k in zip(ramp.elements, (0.0, 0.16, 0.7), ks):
+        e.position = p
+        e.color = (k, k, k, 1)
+    base = color_fn(nt)
+    shaded = mix(nt, 1.0, cr.outputs[0], base, 'MULTIPLY')
+    em = nt.nodes.new('ShaderNodeEmission')
+    nt.links.new(shaded, em.inputs[0])
+    nt.links.new(em.outputs[0], nt.nodes.new('ShaderNodeOutputMaterial').inputs[0])
+    return m
+
+
+def facade(name, wall, glass, bay=3.2, win=0.62, floor_h=3.6, sill=0.3, head=0.85, frame=None):
+    """Window grid in object space on every vertical face; roofs stay wall-coloured."""
+    def fn(nt):
+        tc = nt.nodes.new('ShaderNodeTexCoord')
+        sx = nt.nodes.new('ShaderNodeSeparateXYZ')
+        nt.links.new(tc.outputs['Object'], sx.inputs[0])
+        geo = nt.nodes.new('ShaderNodeNewGeometry')
+        sn = nt.nodes.new('ShaderNodeSeparateXYZ')
+        nt.links.new(geo.outputs['Normal'], sn.inputs[0])
+        u = nmath(nt, 'FRACT', nmath(nt, 'DIVIDE', nmath(nt, 'ADD', sx.outputs[0], sx.outputs[1]), bay))
+        h_ok = nmath(nt, 'LESS_THAN', u, win)
+        v = nmath(nt, 'FRACT', nmath(nt, 'DIVIDE', sx.outputs[2], floor_h))
+        v_ok = nmath(nt, 'MULTIPLY', nmath(nt, 'GREATER_THAN', v, sill), nmath(nt, 'LESS_THAN', v, head))
+        side = nmath(nt, 'LESS_THAN', nmath(nt, 'ABSOLUTE', sn.outputs[2]), 0.5)
+        mask = nmath(nt, 'MULTIPLY', nmath(nt, 'MULTIPLY', h_ok, v_ok), side)
+        return mix(nt, mask, rgb(nt, wall), rgb(nt, glass))
+    m = toon_shader(name, fn)
+    m.diffuse_color = lin(wall) + [1]
+    return m
+
+
+def striped(name, base, line, rules):
+    """UV-patterned surface (roads, runways, parking). u = metres along, v = 0..1 across.
+    rules: list of (kind, a, b, c): ('band', v0, v1, dash) band across v (dash = period in m, 0 = solid)."""
+    def fn(nt):
+        uvn = nt.nodes.new('ShaderNodeUVMap')
+        sx = nt.nodes.new('ShaderNodeSeparateXYZ')
+        nt.links.new(uvn.outputs[0], sx.inputs[0])
+        u, v = sx.outputs[0], sx.outputs[1]
+        total = None
+        for rule in rules:
+            kind, v0, v1, dash = rule[:4]
+            duty = rule[4] if len(rule) > 4 else 0.5
+            inb = nmath(nt, 'MULTIPLY', nmath(nt, 'GREATER_THAN', v, v0), nmath(nt, 'LESS_THAN', v, v1))
+            if dash:
+                d = nmath(nt, 'LESS_THAN', nmath(nt, 'FRACT', nmath(nt, 'DIVIDE', u, dash)), duty)
+                inb = nmath(nt, 'MULTIPLY', inb, d)
+            total = inb if total is None else nmath(nt, 'MAXIMUM', total, inb)
+        return mix(nt, total, rgb(nt, base), rgb(nt, line))
+    m = toon_shader(name, fn)
+    m.diffuse_color = lin(base) + [1]
+    return m
+
+
+def strip(name, pts, width, mat, z=0.0, outline=0.0):
+    """Flat ribbon along a polyline (roads, runways) with UV u = metres along, v = 0..1 across."""
+    bm = bmesh.new()
+    uv = bm.loops.layers.uv.new("UVMap")
+    pts = [Vector((p[0], p[1], z)) for p in pts]
+    L, R, U = [], [], []
+    acc = 0.0
+    for i, p in enumerate(pts):
+        if i == 0:
+            d = (pts[1] - p).normalized()
+            n = Vector((-d.y, d.x, 0))
+        elif i == len(pts) - 1:
+            d = (p - pts[i - 1]).normalized()
+            n = Vector((-d.y, d.x, 0))
+        else:
+            d0 = (p - pts[i - 1]).normalized()
+            d1 = (pts[i + 1] - p).normalized()
+            n0, n1 = Vector((-d0.y, d0.x, 0)), Vector((-d1.y, d1.x, 0))
+            n = (n0 + n1).normalized()
+            n = n / max(0.3, n.dot(n0))
+        if i:
+            acc += (p - pts[i - 1]).length
+        L.append(bm.verts.new(p + n * width / 2))
+        R.append(bm.verts.new(p - n * width / 2))
+        U.append(acc)
+    for i in range(len(pts) - 1):
+        f = bm.faces.new((R[i], R[i + 1], L[i + 1], L[i]))
+        for lp, (uu, vv) in zip(f.loops, ((U[i], 0), (U[i + 1], 0), (U[i + 1], 1), (U[i], 1))):
+            lp[uv].uv = (uu, vv)
+    return new_obj(name, bm, [mat], outline, smooth=False)
+
+
+def label(name, text, loc, rot_z=0.0, size=4.0, mat=None, depth=0.3, upright=True):
+    """Extruded text sign (local text faces -Y when upright)."""
+    cu = bpy.data.curves.new(name, 'FONT')
+    cu.body = text
+    cu.size = size
+    cu.extrude = depth
+    cu.align_x = 'CENTER'
+    cu.align_y = 'CENTER'
+    ob = bpy.data.objects.new(name, cu)
+    TARGET[0].objects.link(ob)
+    if PARENT[0]:
+        ob.parent = PARENT[0]
+    if mat:
+        cu.materials.append(mat)
+    ob.location = loc
+    ob.rotation_euler = (math_mod.radians(90) if upright else 0, 0, math_mod.radians(rot_z))
+    return ob

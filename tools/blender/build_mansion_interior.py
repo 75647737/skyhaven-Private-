@@ -83,73 +83,7 @@ M["tv_on"] = emit("MNI_tv", "#5d86a8", 0.9)
 M["mon"] = emit("MNI_monitor", "#7fb3d9", 1.0)
 
 
-# ---------------------------------------------------------------- builders
-class P:
-    """One furniture object made of boxes, cylinders, blobs and beams in local
-    coordinates (origin on the floor at the footprint centre, front = -Y)."""
-
-    def __init__(s, name):
-        s.name, s.bm, s.mats = name, bmesh.new(), []
-
-    def mi(s, k):
-        m = M[k]
-        if m not in s.mats:
-            s.mats.append(m)
-        return s.mats.index(m)
-
-    def _merge(s, tmp, k, smooth, xf=None):
-        if xf is not None:
-            bmesh.ops.transform(tmp, matrix=xf, verts=tmp.verts)
-        me = bpy.data.meshes.new("_t")
-        tmp.to_mesh(me)
-        tmp.free()
-        off = len(s.bm.faces)
-        s.bm.from_mesh(me)
-        s.bm.faces.ensure_lookup_table()
-        i = s.mi(k)
-        for f in s.bm.faces[off:]:
-            f.material_index = i
-            f.smooth = smooth
-        bpy.data.meshes.remove(me)
-
-    def box(s, x0, x1, y0, y1, z0, z1, k, taper=None, xf=None):
-        t = bmesh.new()
-        add_box(t, x0, x1, y0, y1, z0, z1, 0, taper)
-        s._merge(t, k, False, xf)
-
-    def cyl(s, c, r, h, k, axis='Z', segs=20, r2=None, xf=None):
-        t = bmesh.new()
-        bmesh.ops.create_cone(t, cap_ends=True, segments=segs, radius1=r, radius2=r if r2 is None else r2, depth=h)
-        if axis == 'X':
-            bmesh.ops.rotate(t, verts=t.verts, cent=(0, 0, 0), matrix=Matrix.Rotation(math.pi / 2, 3, 'Y'))
-        elif axis == 'Y':
-            bmesh.ops.rotate(t, verts=t.verts, cent=(0, 0, 0), matrix=Matrix.Rotation(math.pi / 2, 3, 'X'))
-        bmesh.ops.translate(t, vec=Vector(c), verts=t.verts)
-        s._merge(t, k, True, xf)
-
-    def blob(s, c, r, k, subdiv=2):
-        t = bmesh.new()
-        bmesh.ops.create_icosphere(t, subdivisions=subdiv, radius=1)
-        for v in t.verts:
-            v.co = Vector((c[0] + v.co.x * r[0], c[1] + v.co.y * r[1], c[2] + v.co.z * r[2]))
-        s._merge(t, k, True)
-
-    def beam(s, p0, p1, w, h, k):
-        p0, p1 = Vector(p0), Vector(p1)
-        d = p1 - p0
-        t = bmesh.new()
-        bmesh.ops.create_cube(t, size=1)
-        xf = (Matrix.Translation((p0 + p1) / 2) @ d.to_track_quat('X', 'Z').to_matrix().to_4x4()
-              @ Matrix.Diagonal((d.length, w, h, 1)))
-        s._merge(t, k, False, xf)
-
-    def done(s, loc=(0, 0, 0), rot=0.0, outline=0.012):
-        ob = new_obj(s.name, s.bm, s.mats, outline, smooth=None)
-        ob.location = loc
-        ob.rotation_euler.z = math.radians(rot)
-        return ob
-
-
+# ---------------------------------------------------------------- builders (P comes from mansion_kit)
 def wall_x(name, x0, x1, y, z0, z1, holes=(), k="wall", t=0.2):
     """Wall along X centred on y; holes = (a, b, zb, zt)."""
     p = P(name)
