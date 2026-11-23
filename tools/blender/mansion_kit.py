@@ -22,31 +22,51 @@ def lin(h):
     return [x / 12.92 if x <= 0.04045 else ((x + 0.055) / 1.055) ** 2.4 for x in c]
 
 
+def _toon_value(nt, ks):
+    """Three-step toon light value WITHOUT a Color Ramp node: EEVEE packs every Color Ramp
+    in the scene into one table of 128 rows, and a city with the mansion linked has far more
+    materials than that (the extra ones rendered black). Steps at 0.16 and 0.7 like before."""
+    d = nt.nodes.new('ShaderNodeBsdfDiffuse')
+    s2r = nt.nodes.new('ShaderNodeShaderToRGB')
+    bw = nt.nodes.new('ShaderNodeRGBToBW')
+    nt.links.new(d.outputs[0], s2r.inputs[0])
+    nt.links.new(s2r.outputs[0], bw.inputs[0])
+    v = bw.outputs[0]
+    s1 = nt.nodes.new('ShaderNodeMath'); s1.operation = 'GREATER_THAN'
+    nt.links.new(v, s1.inputs[0]); s1.inputs[1].default_value = 0.16
+    s2 = nt.nodes.new('ShaderNodeMath'); s2.operation = 'GREATER_THAN'
+    nt.links.new(v, s2.inputs[0]); s2.inputs[1].default_value = 0.7
+    m1 = nt.nodes.new('ShaderNodeMath'); m1.operation = 'MULTIPLY_ADD'
+    nt.links.new(s1.outputs[0], m1.inputs[0]); m1.inputs[1].default_value = ks[1] - ks[0]; m1.inputs[2].default_value = ks[0]
+    m2 = nt.nodes.new('ShaderNodeMath'); m2.operation = 'MULTIPLY_ADD'
+    nt.links.new(s2.outputs[0], m2.inputs[0]); m2.inputs[1].default_value = ks[2] - ks[1]
+    nt.links.new(m1.outputs[0], m2.inputs[2])
+    return m2.outputs[0]
+
+
+def _toon_finish(nt, value, color):
+    mixn = nt.nodes.new('ShaderNodeMix')
+    mixn.data_type = 'RGBA'
+    mixn.blend_type = 'MULTIPLY'
+    mixn.inputs[0].default_value = 1.0
+    ins = [s for s in mixn.inputs if s.type == 'RGBA']
+    nt.links.new(value, ins[0])
+    if isinstance(color, (list, tuple)):
+        ins[1].default_value = color
+    else:
+        nt.links.new(color, ins[1])
+    em = nt.nodes.new('ShaderNodeEmission')
+    nt.links.new([s for s in mixn.outputs if s.type == 'RGBA'][0], em.inputs[0])
+    nt.links.new(em.outputs[0], nt.nodes.new('ShaderNodeOutputMaterial').inputs[0])
+
+
 def toon(name, hexcol, ks=(0.62, 0.84, 1.0)):
     m = bpy.data.materials.get(name) or bpy.data.materials.new(name)
     m.use_nodes = True
     nt = m.node_tree
     nt.nodes.clear()
-    d = nt.nodes.new('ShaderNodeBsdfDiffuse')
-    s2r = nt.nodes.new('ShaderNodeShaderToRGB')
-    bw = nt.nodes.new('ShaderNodeRGBToBW')
-    cr = nt.nodes.new('ShaderNodeValToRGB')
-    em = nt.nodes.new('ShaderNodeEmission')
-    out = nt.nodes.new('ShaderNodeOutputMaterial')
-    for i, n in enumerate((d, s2r, bw, cr, em, out)):
-        n.location = (i * 220, 0)
-    nt.links.new(d.outputs[0], s2r.inputs[0])
-    nt.links.new(s2r.outputs[0], bw.inputs[0])
-    nt.links.new(bw.outputs[0], cr.inputs[0])
-    nt.links.new(cr.outputs[0], em.inputs[0])
-    nt.links.new(em.outputs[0], out.inputs[0])
-    ramp = cr.color_ramp
-    ramp.interpolation = 'CONSTANT'
-    ramp.elements.new(0.5)
     c = lin(hexcol)
-    for e, p, k in zip(ramp.elements, (0.0, 0.16, 0.7), ks):
-        e.position = p
-        e.color = [v * k for v in c] + [1]
+    _toon_finish(nt, _toon_value(nt, ks), c + [1])
     m.diffuse_color = c + [1]
     return m
 
@@ -399,24 +419,7 @@ def toon_shader(name, color_fn, ks=(0.62, 0.84, 1.0)):
     m.use_nodes = True
     nt = m.node_tree
     nt.nodes.clear()
-    d = nt.nodes.new('ShaderNodeBsdfDiffuse')
-    s2r = nt.nodes.new('ShaderNodeShaderToRGB')
-    bw = nt.nodes.new('ShaderNodeRGBToBW')
-    cr = nt.nodes.new('ShaderNodeValToRGB')
-    nt.links.new(d.outputs[0], s2r.inputs[0])
-    nt.links.new(s2r.outputs[0], bw.inputs[0])
-    nt.links.new(bw.outputs[0], cr.inputs[0])
-    ramp = cr.color_ramp
-    ramp.interpolation = 'CONSTANT'
-    ramp.elements.new(0.5)
-    for e, p, k in zip(ramp.elements, (0.0, 0.16, 0.7), ks):
-        e.position = p
-        e.color = (k, k, k, 1)
-    base = color_fn(nt)
-    shaded = mix(nt, 1.0, cr.outputs[0], base, 'MULTIPLY')
-    em = nt.nodes.new('ShaderNodeEmission')
-    nt.links.new(shaded, em.inputs[0])
-    nt.links.new(em.outputs[0], nt.nodes.new('ShaderNodeOutputMaterial').inputs[0])
+    _toon_finish(nt, _toon_value(nt, ks), color_fn(nt))
     return m
 
 
@@ -513,3 +516,70 @@ def label(name, text, loc, rot_z=0.0, size=4.0, mat=None, depth=0.3, upright=Tru
     ob.location = loc
     ob.rotation_euler = (math_mod.radians(90) if upright else 0, 0, math_mod.radians(rot_z))
     return ob
+
+
+# ---------------------------------------------------------------- consolidation
+def consolidate(coll, skip_prefixes=(), name=None):
+    """Merge the static mesh objects of a collection into one object per outline thickness.
+
+    EEVEE (Blender 5.3) silently stops drawing some surfaces when a scene has a few hundred
+    separately outlined objects (the inverted-hull shell then shows through as black), so big
+    sets keep their static pieces merged. Objects that are hidden, animated, constrained,
+    parented-to, named in skip_prefixes, or carry modifiers other than the outline stay as
+    they are. Transforms are applied into the merged mesh (parented to PARENT[0])."""
+    groups = {}
+    for o in list(coll.objects):
+        if (o.type != 'MESH' or o.hide_render or o.children or o.animation_data or o.constraints
+                or any(o.name.startswith(p) for p in skip_prefixes)):
+            continue
+        if any(m.type != 'SOLIDIFY' for m in o.modifiers):
+            continue
+        so = [m for m in o.modifiers if m.type == 'SOLIDIFY']
+        th = round(so[0].thickness, 4) if so else 0.0
+        groups.setdefault(th, []).append(o)
+    made = []
+    for th, objs in groups.items():
+        if len(objs) < 2:
+            continue
+        bm = bmesh.new()
+        mats = []
+        for o in objs:
+            me = o.data
+            tmp = bmesh.new()
+            tmp.from_mesh(me)
+            for f in tmp.faces:
+                m = me.materials[f.material_index] if f.material_index < len(me.materials) else None
+                if m is None or m == OUTL:
+                    m = me.materials[0] if me.materials else None
+                if m not in mats:
+                    mats.append(m)
+                f.material_index = mats.index(m)
+            bmesh.ops.transform(tmp, matrix=o.matrix_basis, verts=tmp.verts)   # matrix_local may be stale before a depsgraph update
+            tm = bpy.data.meshes.new("_c")
+            tmp.to_mesh(tm)
+            tmp.free()
+            bm.from_mesh(tm)
+            bpy.data.meshes.remove(tm)
+        nm = "%s.merged_%s" % (name or coll.name, str(th).replace(".", "_"))
+        me = bpy.data.meshes.new(nm)
+        bm.to_mesh(me)
+        bm.free()
+        for m in mats:
+            me.materials.append(m)
+        ob = bpy.data.objects.new(nm, me)
+        coll.objects.link(ob)
+        if PARENT[0]:
+            ob.parent = PARENT[0]
+        if th:
+            for _ in mats:
+                me.materials.append(OUTL)
+            so = ob.modifiers.new("Outline", 'SOLIDIFY')
+            so.thickness, so.offset, so.use_flip_normals = th, 1, True
+            so.material_offset, so.use_rim = len(mats), False
+        for o in objs:
+            d = o.data
+            bpy.data.objects.remove(o)
+            if d.users == 0:
+                bpy.data.meshes.remove(d)
+        made.append(ob)
+    return made

@@ -717,7 +717,8 @@ for k, col in enumerate(("car_r", "car_b", "car_w", "car_k", "car_y", "car_s")):
     CARS.append(template(c, "CT.car_t%d" % k, outline=0.02))
 
 
-def traffic(pts, width, n, lanes=2):
+def traffic(pts, width, n, lanes=2, allowed=None):
+    """Parked-looking traffic; `allowed` lanes keep Ace's driving lane clear (see build_airport_drive)."""
     segs = [(Vector(a), Vector(b)) for a, b in zip(pts, pts[1:])]
     total = sum((b - a).length for a, b in segs)
     for i in range(n):
@@ -726,7 +727,7 @@ def traffic(pts, width, n, lanes=2):
             L = (b - a).length
             if s <= L:
                 d = (b - a).normalized()
-                lane = random.choice([k for k in range(lanes)])
+                lane = random.choice(allowed or list(range(lanes)))
                 side = 1 if lane < lanes / 2 else -1
                 off = (width / 2) * (0.25 + 0.5 * (lane % (lanes // 2 or 1)) / max(1, lanes // 2)) * side
                 p = a + d * s + Vector((-d.y, d.x)) * -off
@@ -737,8 +738,8 @@ def traffic(pts, width, n, lanes=2):
             s -= L
 
 
-traffic(SKYWAY, 28, 120, 4)
-traffic([(-1250, AV_Y), (1300, AV_Y)], 16, 60)
+traffic(SKYWAY, 28, 120, 4, allowed=[0, 2, 3])
+traffic([(-1250, AV_Y), (1300, AV_Y)], 16, 60, allowed=[1])
 traffic(BOUL, 18, 25)
 for x in DX:
     traffic([(x, DY[0]), (x, DY[-1])], 18, 6)
@@ -746,7 +747,7 @@ for y in DY:
     traffic([(DX[0], y), (DX[-1], y)], 18, 8)
 for y in MP_Y:
     traffic([(-1450, y), (-680, y)], 10, 5)
-traffic([(2700, -2575), (3950, -2575)], 22, 30, 4)
+traffic([(2700, -2575), (3950, -2575)], 22, 30, 4, allowed=[0, 2, 3])
 # parked cars
 for k in range(140):
     dup(random.choice(CARS), "CT.car_parked", (random.uniform(3060, 3590), random.uniform(-2505, -2435), 0.03),
@@ -770,6 +771,11 @@ fe.box(1010.5, 1012, -1032, -1026, 3.2, 3.5, "metal")
 fe.done(outline=0.03)
 
 flush_batches()
+SKIP = ("CT.jet_", "CT.school_bus", "CT.academy_bus", "CT.family2_home", "CT.mansion")
+for cn in ("CT_Ground", "CT_Roads", "CT_Heights", "CT_Downtown", "CT_Civic", "CT_MaplePark", "CT_Airport",
+           "CT_Nature", "CT_Traffic"):
+    K.PARENT[0] = RIG
+    consolidate(C[cn], SKIP)
 
 # ================================================================ link the mansion
 use(C["CT_Heights"])
