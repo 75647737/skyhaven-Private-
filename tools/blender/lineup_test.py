@@ -19,11 +19,11 @@ argv = sys.argv[sys.argv.index("--") + 1:]
 ROOT, OUT = argv[0], argv[1]
 os.makedirs(OUT, exist_ok=True)
 CH = os.path.join(ROOT, "blender", "characters")
-CAST = [("Ace", "ace_cartoon_v004.blend", "AceCartoon"),
-        ("Tori", "tori_cartoon_v004.blend", "ToriCartoon"),
-        ("Max", "max_cartoon_v002.blend", "MaxCartoon"),
-        ("Daniel", "daniel_cartoon_v001.blend", "DanielCartoon"),
-        ("Emma", "emma_cartoon_v001.blend", "EmmaCartoon")]
+CAST = [("Ace", "ace_cartoon_v005.blend", "AceCartoon"),
+        ("Tori", "tori_cartoon_v005.blend", "ToriCartoon"),
+        ("Max", "max_cartoon_v003.blend", "MaxCartoon"),
+        ("Daniel", "daniel_cartoon_v002.blend", "DanielCartoon"),
+        ("Emma", "emma_cartoon_v002.blend", "EmmaCartoon")]
 GAP = 0.78
 S = bpy.context.scene
 for o in list(bpy.data.objects):          # factory scene: cube, camera, light
@@ -136,6 +136,7 @@ S.render.film_transparent = False
 
 cd = bpy.data.cameras.new("cam")
 cd.type = 'ORTHO'
+cd.clip_start, cd.clip_end = 6.0, 14.0          # tight depth range: face layers sit ~1 mm apart
 cam = bpy.data.objects.new("cam", cd)
 S.collection.objects.link(cam)
 S.camera = cam

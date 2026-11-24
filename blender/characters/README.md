@@ -108,6 +108,20 @@ r = r"C:\Users\DELL\AppData\Roaming\Blender Foundation\Blender\5.3\extensions\bl
 ls._mpfb_data = r + r"\data"; ls._mpfb_root = r
 ```
 
+## Cartoon cast, faces that turn — use these
+
+| Character | File | Built from | Face style |
+|---|---|---|---|
+| Ace | `ace_cartoon_v005.blend` | v004 by `build_ace_face.py` | soft wide bridge, big round bulb, wide wings, full lips, firm chin |
+| Tori | `tori_cartoon_v005.blend` | v004 | small soft nose that turns up, full lips, gentle chin |
+| Max | `max_cartoon_v003.blend` | v002 | baby button nose, chubby cheeks, small lips, soft chin that sits back |
+| Daniel | `daniel_cartoon_v002.blend` | v001 | long straight nose with a narrower bulb, strong chin and jaw, neat ears; polo collar now lies on the chest |
+| Emma | `emma_cartoon_v002.blend` | v001 | straighter, longer nose with a small round tip, full lips, neat chin; the loose wisps by the ears are thin curls (they were flat ovals), hoops hang clear of the jaw |
+
+Tori, Max, Daniel and Emma are built by `tools/blender/build_face.py` (`blender -b <char.blend> --python tools/blender/build_face.py -- <PREFIX> <out.blend>`), the same approach as Ace (see "Cartoon Ace, face that turns" below) with a style per character in its `STYLES` table. Each head is mapped onto Ace's head proportions, sculpted there and mapped back, so the same numbers place the features on heads of every size. Pieces of one mouth shape move together, and the round O/U openings sit centred in their ring. Same controls as before (`mouth` 0–8, `blink`, `look_x/y`, `brows`, `brow_tilt`).
+
+Sheets per character in `characters/3d/` (`<name>_<ver>_turn.png`, `_turn_close.png`, `_mouth.png`, `_expr.png`); the cast side by side in `characters/3d/lineup/`.
+
 ## Ace cartoon versions (style test)
 
 - **2D:** `characters/2d/ace_cartoon.html` (renders to `ace_cartoon_sheet.png`): original cartoon model sheet — front view, four expressions (easy smile, still planning, surprised, tired), palette from the blueprint, 5-heads-tall proportions vs the realistic 8.

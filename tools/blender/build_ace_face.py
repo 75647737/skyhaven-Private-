@@ -318,6 +318,16 @@ for side in ("L", "R"):
     cen = sum((v.co for v in rme.vertices), Vector()) / len(rme.vertices)
     for v in rme.vertices:
         v.co = cen + (v.co - cen) * 1.11
+    # a ring, not a disc: the rim never lies under the white, so no camera can show it through
+    ext = [max(abs(v.co[i] - cen[i]) for v in rme.vertices) or 1.0 for i in range(3)]
+    big = sorted(range(3), key=lambda i: -ext[i])[:2]
+    bmr = bmesh.new()
+    bmr.from_mesh(rme)
+    inner = [f for f in bmr.faces
+             if sum(((f.calc_center_median()[i] - cen[i]) / ext[i]) ** 2 for i in big) ** 0.5 < 0.84]
+    bmesh.ops.delete(bmr, geom=inner, context='FACES')
+    bmr.to_mesh(rme)
+    bmr.free()
     rme.materials.clear()
     rme.materials.append(bpy.data.materials[P[:-1] + "_outline"])
     rim = bpy.data.objects.new(P + "eye_rim." + side, rme)
@@ -328,13 +338,13 @@ for side in ("L", "R"):
     rim.matrix_basis = eo.matrix_basis.copy()
     ss = rim.modifiers.new("Smooth", 'SUBSURF')
     ss.levels = ss.render_levels = 1
-    stick(rim, 0.0005)
+    stick(rim, 0.0002)
 
 for side in ("L", "R"):
-    stick(bpy.data.objects[P + "eye." + side], 0.0012)
-    stick(bpy.data.objects[P + "iris." + side], 0.0022)
-    stick(bpy.data.objects[P + "pupil." + side], 0.0030)
-    stick(bpy.data.objects[P + "shine." + side], 0.0038)
+    stick(bpy.data.objects[P + "eye." + side], 0.0016)
+    stick(bpy.data.objects[P + "iris." + side], 0.0030)
+    stick(bpy.data.objects[P + "pupil." + side], 0.0042)
+    stick(bpy.data.objects[P + "shine." + side], 0.0054)
     stick(bpy.data.objects[P + "brow." + side], 0.0030)
 for o in bpy.data.objects:
     if o.name.startswith(P + "mouth."):
