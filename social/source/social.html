@@ -1,0 +1,84 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+@font-face{font-family:Mont;src:url("Montserrat[wght].ttf");font-weight:100 900}
+@font-face{font-family:Corm;font-style:italic;src:url("CormorantGaramond-Italic[wght].ttf");font-weight:300 700}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#222}
+:root{--navy:#14213d;--red:#c4161c;--gold:#f2c46d;--sky:#8fd3ff}
+.art{position:relative;overflow:hidden;margin:0 0 30px}
+.abs{position:absolute}
+/* ---------- profile picture 1080 x 1080 ---------- */
+#pfp{width:1080px;height:1080px;background:radial-gradient(circle at 50% 38%,#ffe2b3 0,#ffc38a 22%,#7fb6e8 58%,#2b5a9c 100%)}
+#pfp .sun{left:600px;top:120px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,#fff6dc 0,#ffe3a6 55%,rgba(255,227,166,0) 72%)}
+#pfp svg{left:0;top:0}
+#pfp .ace{left:-100px;top:-120px;width:1280px}
+#pfp .ring{left:0;top:0;width:1080px;height:1080px;border-radius:50%;box-shadow:inset 0 0 0 26px rgba(255,255,255,.92),inset 0 0 0 34px #c4161c}
+/* ---------- YouTube banner 2560 x 1440 (safe 1546 x 423 centred) ---------- */
+.cov{background:#0e1830}
+.cov .bg{inset:0;background-size:cover;background-position:center 62%;filter:saturate(1.1)}
+.cov .shade{inset:0}
+.cov .ttl{font:900 120px/0.9 Mont;color:#fff;letter-spacing:-.02em;text-shadow:0 8px 30px rgba(0,0,0,.35)}
+.cov .ttl span{color:var(--gold)}
+.cov .tag{font:italic 500 62px/1 Corm;color:#fff;text-shadow:0 4px 18px rgba(0,0,0,.4)}
+.cov .by{display:inline-flex;align-items:center;gap:16px;background:var(--navy);border-radius:60px;padding:12px 28px 12px 22px;box-shadow:0 10px 30px rgba(0,0,0,.35);border-bottom:4px solid var(--red)}
+.cov .by img{height:40px}
+.cov .by b{font:800 22px Mont;letter-spacing:.24em;color:#fff;white-space:nowrap}
+.cov .cast{-webkit-mask-image:linear-gradient(180deg,#000 0,#000 70%,transparent 98%);mask-image:linear-gradient(180deg,#000 0,#000 70%,transparent 98%)}
+.cov .new{font:800 22px Mont;letter-spacing:.3em;color:#fff;background:var(--red);padding:10px 18px;border-radius:8px;display:inline-block}
+#yt{width:2560px;height:1440px}
+#yt .bg{background-image:url(city_v009_ep_airport_hero.png)}
+#yt .shade{background:linear-gradient(90deg,rgba(14,24,48,.92) 0,rgba(14,24,48,.82) 38%,rgba(14,24,48,.25) 62%,rgba(14,24,48,.05) 100%),linear-gradient(180deg,rgba(0,0,0,0) 60%,rgba(14,24,48,.6) 100%)}
+#yt .txt{left:540px;top:512px;width:820px}
+#yt .cast{left:1290px;top:600px;width:740px}
+/* ---------- Facebook cover 1640 x 624 ---------- */
+#fb{width:1640px;height:624px}
+#fb .bg{background-image:url(city_v009_ep_airport_hero.png);background-position:center 66%}
+#fb .shade{background:linear-gradient(90deg,rgba(14,24,48,.92) 0,rgba(14,24,48,.8) 42%,rgba(14,24,48,.2) 70%,rgba(14,24,48,.05) 100%)}
+#fb .txt{left:150px;top:120px;width:760px}
+#fb .cast{left:840px;top:330px;width:760px}
+/* ---------- X header 1500 x 500 ---------- */
+#xh{width:1500px;height:500px}
+#xh .bg{background-image:url(city_v009_ep_airport_hero.png);background-position:center 66%}
+#xh .shade{background:linear-gradient(90deg,rgba(14,24,48,.92) 0,rgba(14,24,48,.82) 45%,rgba(14,24,48,.2) 80%,rgba(14,24,48,.05) 100%)}
+#xh .txt{left:90px;top:60px;width:760px}
+#xh .cast{left:860px;top:270px;width:600px}
+</style></head><body>
+
+<div class="art" id="pfp">
+ <div class="abs sun"></div>
+ <svg class="abs" width="1080" height="1080" viewBox="0 0 1080 1080">
+  <!-- skyline -->
+  <path d="M0,820 L0,700 L60,700 L60,640 L110,640 L110,700 L150,700 L150,600 L200,600 L200,700 L240,700 L240,660 L280,660 L280,560 L300,540 L320,560 L320,700 L380,700 L380,620 L430,620 L430,700 L1080,700 L1080,1080 L0,1080 Z" fill="#1f3f72" opacity=".55"/>
+  <!-- contrail + jet -->
+  <path d="M60,470 C260,300 520,230 820,250" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round" stroke-dasharray="2 22" opacity=".9"/>
+  <g transform="translate(860,252) rotate(4) scale(2.2)"><path d="M-26,0 L20,-3 Q31,0 20,3 Z M-5,-2 L-16,-22 L-9,-22 L7,-2 Z M-5,2 L-16,22 L-9,22 L7,2 Z M-23,-1 L-30,-11 L-25,-11 L-17,-1 Z M-23,1 L-30,11 L-25,11 L-17,1 Z" fill="#fff"/></g>
+ </svg>
+ <img class="abs ace" src="ace_front_cut.png">
+ <div class="abs ring"></div>
+</div>
+
+<div class="art cov" id="yt">
+ <div class="abs bg"></div><div class="abs shade"></div>
+ <div class="abs txt"><div class="new" style="font-size:20px;padding:8px 16px">NEW ANIMATED SERIES</div>
+  <div class="ttl" style="margin-top:16px;font-size:100px">SKYHAVEN<br><span>STORIES</span></div>
+  <div class="tag" style="margin-top:14px;font-size:50px">Every dream needs a runway.</div>
+  <div class="by" style="margin-top:18px;padding:9px 22px 9px 16px"><img src="logo-white.png" style="height:32px"><b style="font-size:19px">A SKYTRADE AVIATION ORIGINAL</b></div></div>
+ <img class="abs cast" src="cast_faces_cut.png">
+</div>
+
+<div class="art cov" id="fb">
+ <div class="abs bg"></div><div class="abs shade"></div>
+ <div class="abs txt"><div class="new" style="font-size:18px">NEW ANIMATED SERIES</div>
+  <div class="ttl" style="font-size:96px;margin-top:20px">SKYHAVEN<br><span>STORIES</span></div>
+  <div class="tag" style="font-size:48px;margin-top:18px">Every dream needs a runway.</div>
+  <div class="by" style="margin-top:24px;padding:9px 22px 9px 16px"><img src="logo-white.png" style="height:30px"><b style="font-size:17px">A SKYTRADE AVIATION ORIGINAL</b></div></div>
+ <img class="abs cast" src="cast_faces_cut.png">
+</div>
+
+<div class="art cov" id="xh">
+ <div class="abs bg"></div><div class="abs shade"></div>
+ <img class="abs cast" src="cast_faces_cut.png">
+ <div class="abs txt"><div class="ttl" style="font-size:84px">SKYHAVEN <span>STORIES</span></div>
+  <div class="tag" style="font-size:46px;margin-top:16px">Every dream needs a runway.</div>
+  <div class="by" style="margin-top:22px;padding:9px 22px 9px 16px"><img src="logo-white.png" style="height:30px"><b style="font-size:17px">A SKYTRADE AVIATION ORIGINAL</b></div></div>
+</div>
+</body></html>
